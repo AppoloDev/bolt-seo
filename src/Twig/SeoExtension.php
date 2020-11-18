@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Appolo\BoltSeo\Twig;
 
-use Bolt\Common\Json;
+use Appolo\BoltSeo\Extension;
 use Bolt\Configuration\Config;
 use Bolt\Entity\Content;
 use Bolt\Extension\ExtensionInterface;
@@ -13,29 +13,21 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Tightenco\Collect\Support\Collection;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Webmozart\PathUtil\Path;
 
 class SeoExtension extends AbstractExtension
 {
-    /**
-     * @var ExtensionRegistry
-     */
+    /** @var ExtensionRegistry */
     private $extensionRegistry;
-    /**
-     * @var TranslatorInterface
-     */
+    /** @var TranslatorInterface */
     private $translator;
-    /**
-     * @var Config
-     */
+    /** @var Config */
     private $config;
 
     public function __construct(
         ExtensionRegistry $extensionRegistry,
         TranslatorInterface $translator,
         Config $config
-    )
-    {
+    ) {
         $this->extensionRegistry = $extensionRegistry;
         $this->translator = $translator;
         $this->config = $config;
@@ -60,14 +52,14 @@ class SeoExtension extends AbstractExtension
 
         switch ($field) {
             case 'slug':
-                if($content->hasField('slug')) {
+                if ($content->hasField('slug')) {
                     return $content->getField('slug')->__toString();
                 }
 
                 return $this->translator->trans('default-title');
             case 'title':
                 $title = $this->translator->trans('Default title');
-                if (!isset($fieldsConfig['title'])) {
+                if (! isset($fieldsConfig['title'])) {
                     return $title;
                 }
 
@@ -83,7 +75,7 @@ class SeoExtension extends AbstractExtension
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
                     Sed cursus purus lacus, eget commodo quam finibus luctus. Aliquam odio nibh, commodo sit amet dui in.
                 ';
-                if (!isset($fieldsConfig['description'])) {
+                if (! isset($fieldsConfig['description'])) {
                     return $description;
                 }
 
@@ -96,14 +88,11 @@ class SeoExtension extends AbstractExtension
                 return $description;
             case 'postfix':
                 if ($this->getExtensionConfig()->get('title_postfix') !== false) {
-
-                    $titleSeparator = $this->getExtensionConfig()->get('title_separator')
-                        ? $this->getExtensionConfig()->get('title_separator')
-                        : '-';
+                    $titleSeparator = $this->getExtensionConfig()->get('title_separator') ?: '-';
 
                     $titlePostfix = $this->getExtensionConfig()->get('title_postfix') !== ''
                         ? $this->getExtensionConfig()->get('title_postfix')
-                        : 'plop' //config.get('general/sitename')
+                        : $this->config->get('general/sitename')
                     ;
 
                     return " {$titleSeparator} {$titlePostfix}";
@@ -111,6 +100,8 @@ class SeoExtension extends AbstractExtension
 
                 return '';
         }
+
+        return '';
     }
 
     private function getExtension(): ExtensionInterface
@@ -120,6 +111,9 @@ class SeoExtension extends AbstractExtension
 
     private function getExtensionConfig(): Collection
     {
-        return $this->getExtension()->getConfig();
+        /** @var Extension $extension */
+        $extension = $this->getExtension();
+
+        return $extension->getConfig();
     }
 }

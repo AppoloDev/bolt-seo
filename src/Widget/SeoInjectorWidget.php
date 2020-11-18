@@ -24,7 +24,7 @@ class SeoInjectorWidget extends BaseWidget implements TwigAwareInterface
         /** @var Request $request */
         $request = $this->getExtension()->getRequest();
 
-        if (! in_array($request->get('_route'), ['bolt_content_edit', 'bolt_content_new'], true) ||
+        if (! \in_array($request->get('_route'), ['bolt_content_edit', 'bolt_content_new'], true) ||
             ($this->getExtension()->getRequest()->getMethod() !== 'GET')) {
             return null;
         }
