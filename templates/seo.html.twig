@@ -1,0 +1,240 @@
+{% extends '@bolt/_partials/fields/_base.html.twig' %}
+
+{% block label %}{% endblock %}
+
+{% block field %}
+    {% set seoconfig = seoGetConfig() %}
+
+    <div id="field-set-{{ name }}" class="form-group form-set is-normal">
+        {% include '@bolt/_partials/fields/_label.html.twig' %}
+
+        <div class="form-set-fields form-fields[{{ name }}]">
+            {{ block('seo_title') }}
+            {{ block('seo_description') }}
+            {{ block('seo_keywords') }}
+            {{ block('seo_snippet') }}
+            {{ block('seo_shortlink') }}
+            {{ block('seo_canonical') }}
+            {{ block('seo_robots') }}
+            {{ block('seo_og') }}
+        </div>
+    </div>
+
+    <input type="hidden" name="{{ name }}" id="{{ id }}" value="">
+{% endblock %}
+
+{% block seo_title %}
+    <div id="field-text-{{ name }}-title" class="form-group in-compound is-normal">
+        <label for="field-{{ name }}-title" class="editor--label">
+            {{ __("SEO Title") }}:
+        </label>
+
+        <div>
+            <input
+                name="{{ name }}[title]"
+                class="form-control"
+                id="seofields-title"
+                maxlength="255"
+                type="text"
+                value="{{ seovalues.title|default('') }}"
+            />
+        </div>
+
+        <div id="field-{{ name }}-title_postfix" class="form--helper">
+            <p>{{ __("Will be used as the <tt>&lt;title&gt;</tt> and in search engines") }}.
+                {{ __("Limit the length to %s characters", {'%s': seoconfig.title_length|default(70)}) }}.</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block seo_description %}
+    <div id="field-text-{{ name }}-description" class="form-group in-compound is-normal">
+        <label for="field-{{ name }}-description" class="editor--label">
+            {{ __("Meta description") }}:
+        </label>
+
+        <div>
+            <textarea
+                name="{{ name }}[description]"
+                class="form-control"
+                id="seofields-description"
+                style="height: 80px;"
+            >
+                {{ seovalues.description|default('') }}
+            </textarea>
+        </div>
+
+        <div id="field-{{ name }}-description_postfix" class="form--helper">
+            <p>{{ __('Will be used as the <tt>&lt;meta name="description"&gt;</tt>, and will show up in search engines') }}.
+                {{ __("Limit the length to %s characters", {'%s': seoconfig.description_length|default(158)}) }}.</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block seo_keywords %}
+    {% set keywords_length = seoconfig.keywords_length|default(0) %}
+    {% if keywords_length > 0 %}
+        <div id="field-text-{{ name }}-keywords" class="form-group in-compound is-normal">
+            <label for="field-{{ name }}-keywords" class="editor--label">
+                {{ __("Meta keywords") }}:
+            </label>
+
+            <div>
+                <textarea
+                        name="{{ name }}[keywords]"
+                        class="form-control"
+                        id="seofields-keywords"
+                        style="height: 80px;"
+                >
+                    {{ seovalues.keywords|default('') }}
+                </textarea>
+            </div>
+
+            <div id="field-{{ name }}-keywords_postfix" class="form--helper">
+                <p>
+                    {{ __('Will be used as the <tt>&lt;meta name="keywords"&gt;</tt>, and will show up in <em>some</em> search engines. Use comma separated tags only') }}.
+                    {{ __("Limit the length to %s characters", {'%s': keywords_length}) }}.
+                </p>
+            </div>
+        </div>
+    {% else %}
+        <input type='hidden' id="seofields-keywords" value='{{ seovalues.keywords|default('') }}'>
+    {% endif %}
+{% endblock %}
+
+{% block seo_snippet %}
+    <div id="field-text-{{ name }}-snippet" class="form-group in-compound is-normal">
+        <label for="field-{{ name }}-snippet" class="editor--label">
+            {{ __("Google snippet preview") }}:
+        </label>
+
+        <div>
+            <div
+                class="seo_snippet"
+                data-base-url="{{ absolute_url(path( 'record', { 'contentTypeSlug': record.definition.singular_slug, 'slugOrId': seoFieldValue(record, 'slug') })) }}"
+                data-base-title="{{ seoFieldValue(record, 'title') }}"
+                data-base-slug="{{ seoFieldValue(record, 'slug') }}"
+                data-base-description="{{ seoFieldValue(record, 'description') }}"
+                data-base-title-postfix="{{ seoFieldValue(record, 'postfix') }}"
+            >
+                <div class="url">
+                    <span class="url"></span>
+                    <span class="caret"></span>
+                </div>
+                <div class="title"></div>
+                <div class="description"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block seo_shortlink %}
+    <div id="field-text-{{ name }}-shortlink" class="form-group in-compound is-normal">
+        <label for="field-{{ name }}-shortlink" class="editor--label">
+            {{ __("Shortlink") }} ({{ __("alias") }}):
+        </label>
+
+        <div>
+            <input
+                    name="{{ name }}[shortlink]"
+                    class="form-control"
+                    id="seofields-shortlink"
+                    maxlength="255"
+                    type="text"
+                    value="{{ seovalues.shortlink|default('') }}"
+            />
+        </div>
+
+        <div id="field-{{ name }}-shortlink_postfix" class="form--helper">
+            <p>
+                {{ __("Use this to create an alias or shortlink to this record. Be sure to make it an absolute link, starting with a <tt>/</tt>") }}
+                .
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block seo_canonical %}
+    <div id="field-text-{{ name }}-canonical" class="form-group in-compound is-normal">
+        <label for="field-{{ name }}-canonical" class="editor--label">
+            {{ __("Canonical Link") }}:
+        </label>
+
+        <div>
+            <input
+                    name="{{ name }}[canonical]"
+                    class="form-control"
+                    id="seofields-canonical"
+                    maxlength="255"
+                    type="text"
+                    value="{{ seovalues.canonical|default('') }}"
+            />
+        </div>
+
+        <div id="field-{{ name }}-canonical_postfix" class="form--helper">
+            <p>
+                {{ __('Use this to override the <tt>&lt;link rel="canonical"&gt;</tt>') }}.
+                {{ __("Use with caution, and only if you know what you're doing") }}.
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block seo_robots %}
+    <div id="field-text-{{ name }}-robots" class="form-group in-compound is-normal">
+        <label for="field-{{ name }}-robots" class="editor--label">
+            {{ __("Meta Robots Tag") }}:
+        </label>
+
+        <div>
+            <select
+                name="{{ name }}[robots]"
+                id="seofields-robots"
+                class="form-control"
+            >
+                {% for option in ['index, follow', 'noindex, follow', 'index, nofollow', 'noindex, nofollow', 'noodp' ] %}
+                    <option
+                        value="{{ option }}"
+{# TODO {% if seovalues.robots == option %}selected{% endif %} #}
+                    >
+                        {{ option }}
+                    </option>
+                {% endfor %}
+            </select>
+
+        </div>
+
+        <div id="field-{{ name }}-robots_postfix" class="form--helper">
+            <p>
+                {{ __('Use this to set the <tt>&lt;meta name="robots"&gt;</tt>') }}.
+                {{ __("Use with caution, and only if you know what you're doing") }}.
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block seo_og %}
+    <div id="field-text-{{ name }}-og" class="form-group in-compound is-normal">
+        <label for="field-{{ name }}-og" class="editor--label">
+            {{ __("Open Graph Type") }}:
+        </label>
+
+        <div>
+            <input
+                    name="{{ name }}[og]"
+                    class="form-control"
+                    id="seofields-og"
+                    maxlength="255"
+                    type="text"
+                    value="{{ seovalues.ogtype|default('') }}"
+            />
+        </div>
+
+        <div id="field-{{ name }}-og_postfix" class="form--helper">
+            <p>
+                {{ __('Use this to set the <tt>&lt;meta name="og:type"&gt;</tt>') }}.
+                {{ __("Leave blank for the default") }}.
+            </p>
+        </div>
+    </div>
+{% endblock %}
