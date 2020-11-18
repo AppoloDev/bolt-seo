@@ -12,13 +12,28 @@ class SeoSnippet {
             description: document.querySelector('.seo_snippet .description')
         };
 
+        this.inputs = {
+            title: document.querySelector(`[name="${this.container.dataset.fieldTitle}"]`),
+            slug: document.querySelector(`[name="${this.container.dataset.fieldSlug}"]`),
+            description: document.querySelector(`[name="${this.container.dataset.fieldDescription}"]`),
+        }
+
         this.init();
+        this.initEvents();
     }
 
     init() {
         this.targetElements.title.innerHTML = this.defaultsData.title;
         this.targetElements.url.innerHTML = this.defaultsData.url.replace('REPLACE', 'bolt-seo-extension');
         this.targetElements.description.innerHTML = this.defaultsData.description;
+    }
+
+    initEvents() {
+        if(this.inputs.title) {
+            this.inputs.title.addEventListener('keyup', (e) => {
+                this.targetElements.title.innerHTML = this.inputs.title.value;
+            });
+        }
     }
 }
 

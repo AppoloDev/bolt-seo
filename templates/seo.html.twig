@@ -103,6 +103,10 @@
 {% endblock %}
 
 {% block seo_snippet %}
+    {% set titleField = seoField(record, 'title') %}
+    {% set descriptionField = seoField(record, 'description') %}
+    {% set slugField = seoField(record, 'slug') %}
+
     <div id="field-text-{{ name }}-snippet" class="form-group in-compound is-normal">
         <label for="field-{{ name }}-snippet" class="editor--label">
             {{ __("Google snippet preview") }}:
@@ -116,6 +120,9 @@
                 data-base-slug="{{ seoFieldValue(record, 'slug') }}"
                 data-base-description="{{ seoFieldValue(record, 'description') }}"
                 data-base-title-postfix="{{ seoFieldValue(record, 'postfix') }}"
+                data-field-title="{{ titleField ? 'fields['~titleField.name~']' : '' }}"
+                data-field-description="{{ descriptionField ? 'fields['~descriptionField.name~']' : '' }}"
+                data-field-slug="{{ slugField ? 'fields['~slugField.name~']' : '' }}"
             >
                 <div class="url">
                     <span class="url"></span>

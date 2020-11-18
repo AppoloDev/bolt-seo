@@ -7,6 +7,7 @@ namespace Appolo\BoltSeo\Twig;
 use Appolo\BoltSeo\Extension;
 use Bolt\Configuration\Config;
 use Bolt\Entity\Content;
+use Bolt\Entity\Field;
 use Bolt\Extension\ExtensionInterface;
 use Bolt\Extension\ExtensionRegistry;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -38,6 +39,7 @@ class SeoExtension extends AbstractExtension
         return [
             new TwigFunction('seoGetConfig', [$this, 'seoGetConfig']),
             new TwigFunction('seoFieldValue', [$this, 'seoFieldValue']),
+            new TwigFunction('seoField', [$this, 'seoField']),
         ];
     }
 
@@ -46,46 +48,66 @@ class SeoExtension extends AbstractExtension
         return $this->getExtensionConfig()->toArray();
     }
 
-    public function seoFieldValue(Content $content, string $field): string
+    public function seoField(Content $content, string $field): ?Field
     {
         $fieldsConfig = $this->getExtensionConfig()->get('fields');
 
         switch ($field) {
             case 'slug':
                 if ($content->hasField('slug')) {
-                    return $content->getField('slug')->__toString();
+                    return $content->getField('slug');
                 }
 
-                return $this->translator->trans('default-title');
+                return null;
             case 'title':
-                $title = $this->translator->trans('Default title');
                 if (! isset($fieldsConfig['title'])) {
-                    return $title;
+                    return null;
                 }
 
                 foreach ($fieldsConfig['title'] as $fieldName) {
                     if ($content->hasField($fieldName)) {
-                        return $content->getField($fieldName)->__toString();
+                        return $content->getField($fieldName);
                     }
                 }
 
-                return $title;
+                return null;
+            case 'description':
+                if (! isset($fieldsConfig['description'])) {
+                    return null;
+                }
+
+                foreach ($fieldsConfig['description'] as $fieldName) {
+                    if ($content->hasField($fieldName)) {
+                        return $content->getField($fieldName);
+                    }
+                }
+
+                return null;
+        }
+
+        return null;
+    }
+
+    public function seoFieldValue(Content $content, string $field): string
+    {
+        switch ($field) {
+            case 'slug':
+                $seoField = $this->seoField($content, 'slug');
+
+                return $seoField ? $seoField->__toString() : $this->translator->trans('default-title');
+            case 'title':
+                $title = $this->translator->trans('Default title');
+                $seoField = $this->seoField($content, 'title');
+
+                return $seoField ? $seoField->__toString() : $title;
             case 'description':
                 $description = '
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
                     Sed cursus purus lacus, eget commodo quam finibus luctus. Aliquam odio nibh, commodo sit amet dui in.
                 ';
-                if (! isset($fieldsConfig['description'])) {
-                    return $description;
-                }
+                $seoField = $this->seoField($content, 'description');
 
-                foreach ($fieldsConfig['description'] as $fieldName) {
-                    if ($content->hasField($fieldName)) {
-                        return $content->getField($fieldName)->__toString();
-                    }
-                }
-
-                return $description;
+                return $seoField ? $seoField->__toString() : $description;
             case 'postfix':
                 if ($this->getExtensionConfig()->get('title_postfix') !== false) {
                     $titleSeparator = $this->getExtensionConfig()->get('title_separator') ?: '-';
