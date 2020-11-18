@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Appolo\BoltSeo;
+namespace Appolo\BoltSeo\Twig;
 
 use Bolt\Common\Json;
 use Bolt\Configuration\Config;
@@ -15,7 +15,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Webmozart\PathUtil\Path;
 
-class TwigExtension extends AbstractExtension
+class SeoExtension extends AbstractExtension
 {
     /**
      * @var ExtensionRegistry

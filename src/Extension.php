@@ -2,6 +2,7 @@
 
 namespace Appolo\BoltSeo;
 
+use Appolo\BoltSeo\Widget\SeoInjectorWidget;
 use Bolt\Extension\BaseExtension;
 use Symfony\Component\Filesystem\Filesystem;
 
