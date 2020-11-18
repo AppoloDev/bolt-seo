@@ -63,6 +63,7 @@ class SeoExtension extends AbstractExtension
                 if($content->hasField('slug')) {
                     return $content->getField('slug')->__toString();
                 }
+
                 return $this->translator->trans('default-title');
             case 'title':
                 $title = $this->translator->trans('Default title');
