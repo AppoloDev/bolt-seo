@@ -60,15 +60,18 @@ class SeoExtension extends AbstractExtension
 
         switch ($field) {
             case 'slug':
-                return 'default-title';
+                if($content->hasField('slug')) {
+                    return $content->getField('slug')->__toString();
+                }
+                return $this->translator->trans('default-title');
             case 'title':
                 $title = $this->translator->trans('Default title');
-                if(!isset($fieldsConfig['title'])) {
+                if (!isset($fieldsConfig['title'])) {
                     return $title;
                 }
 
                 foreach ($fieldsConfig['title'] as $fieldName) {
-                     if($content->hasField($fieldName)) {
+                    if ($content->hasField($fieldName)) {
                         return $content->getField($fieldName)->__toString();
                     }
                 }
@@ -79,24 +82,23 @@ class SeoExtension extends AbstractExtension
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
                     Sed cursus purus lacus, eget commodo quam finibus luctus. Aliquam odio nibh, commodo sit amet dui in.
                 ';
-                if(!isset($fieldsConfig['description'])) {
+                if (!isset($fieldsConfig['description'])) {
                     return $description;
                 }
 
                 foreach ($fieldsConfig['description'] as $fieldName) {
-                    if($content->hasField($fieldName)) {
+                    if ($content->hasField($fieldName)) {
                         return $content->getField($fieldName)->__toString();
                     }
                 }
 
                 return $description;
             case 'postfix':
-                if($this->getExtensionConfig()->get('title_postfix') !== false) {
+                if ($this->getExtensionConfig()->get('title_postfix') !== false) {
 
                     $titleSeparator = $this->getExtensionConfig()->get('title_separator')
                         ? $this->getExtensionConfig()->get('title_separator')
-                        : '-'
-                    ;
+                        : '-';
 
                     $titlePostfix = $this->getExtensionConfig()->get('title_postfix') !== ''
                         ? $this->getExtensionConfig()->get('title_postfix')
