@@ -103,9 +103,9 @@
 {% endblock %}
 
 {% block seo_snippet %}
-    {% set titleField = seoField(record, 'title') %}
-    {% set descriptionField = seoField(record, 'description') %}
-    {% set slugField = seoField(record, 'slug') %}
+    {% set titleField = seoFieldDefinition(record, 'title') %}
+    {% set descriptionField = seoFieldDefinition(record, 'description') %}
+    {% set slugField = seoFieldDefinition(record, 'slug') %}
 
     <div id="field-text-{{ name }}-snippet" class="form-group in-compound is-normal">
         <label for="field-{{ name }}-snippet" class="editor--label">
@@ -115,14 +115,14 @@
         <div>
             <div
                 class="seo_snippet"
-                data-base-url="{{ absolute_url(path( 'record', { 'contentTypeSlug': record.definition.singular_slug, 'slugOrId': seoFieldValue(record, 'slug') })) }}"
+                data-base-url="{{ absolute_url(path( 'record', { 'contentTypeSlug': record.definition.singular_slug, 'slugOrId': 'REPLACE'})) }}"
                 data-base-title="{{ seoFieldValue(record, 'title') }}"
                 data-base-slug="{{ seoFieldValue(record, 'slug') }}"
                 data-base-description="{{ seoFieldValue(record, 'description') }}"
                 data-base-title-postfix="{{ seoFieldValue(record, 'postfix') }}"
-                data-field-title="{{ titleField ? 'fields['~titleField.name~']' : '' }}"
-                data-field-description="{{ descriptionField ? 'fields['~descriptionField.name~']' : '' }}"
-                data-field-slug="{{ slugField ? 'fields['~slugField.name~']' : '' }}"
+                data-field-title="{{ titleField ? 'fields['~titleField.slug~']' : '' }}"
+                data-field-description="{{ descriptionField ? 'fields['~descriptionField.slug~']' : '' }}"
+                data-field-slug="{{ slugField ? 'fields['~slugField.slug~']' : '' }}"
             >
                 <div class="url">
                     <span class="url"></span>

@@ -6,6 +6,7 @@ namespace Appolo\BoltSeo\Twig;
 
 use Appolo\BoltSeo\Extension;
 use Bolt\Configuration\Config;
+use Bolt\Configuration\Content\ContentType;
 use Bolt\Entity\Content;
 use Bolt\Entity\Field;
 use Bolt\Extension\ExtensionInterface;
@@ -39,6 +40,7 @@ class SeoExtension extends AbstractExtension
         return [
             new TwigFunction('seoGetConfig', [$this, 'seoGetConfig']),
             new TwigFunction('seoFieldValue', [$this, 'seoFieldValue']),
+            new TwigFunction('seoFieldDefinition', [$this, 'seoFieldDefinition']),
             new TwigFunction('seoField', [$this, 'seoField']),
         ];
     }
@@ -51,41 +53,10 @@ class SeoExtension extends AbstractExtension
     public function seoField(Content $content, string $field): ?Field
     {
         $fieldsConfig = $this->getExtensionConfig()->get('fields');
-
-        switch ($field) {
-            case 'slug':
-                if ($content->hasField('slug')) {
-                    return $content->getField('slug');
-                }
-
-                return null;
-            case 'title':
-                if (! isset($fieldsConfig['title'])) {
-                    return null;
-                }
-
-                foreach ($fieldsConfig['title'] as $fieldName) {
-                    if ($content->hasField($fieldName)) {
-                        return $content->getField($fieldName);
-                    }
-                }
-
-                return null;
-            case 'description':
-                if (! isset($fieldsConfig['description'])) {
-                    return null;
-                }
-
-                foreach ($fieldsConfig['description'] as $fieldName) {
-                    if ($content->hasField($fieldName)) {
-                        return $content->getField($fieldName);
-                    }
-                }
-
-                return null;
+        if(!isset($fieldsConfig[$field])) {
+            return null;
         }
-
-        return null;
+        return $this->getField($content, $fieldsConfig[$field]);
     }
 
     public function seoFieldValue(Content $content, string $field): string
@@ -124,6 +95,46 @@ class SeoExtension extends AbstractExtension
         }
 
         return '';
+    }
+
+    public function seoFieldDefinition(Content $content, string $field): ?ContentType
+    {
+        $fieldsConfig = $this->getExtensionConfig()->get('fields');
+        if(!isset($fieldsConfig[$field])) {
+            return null;
+        }
+        return $this->getFieldDefinition($content, $fieldsConfig[$field]);
+    }
+
+    protected function getFieldDefinition(Content $content, array $fields = []): ?ContentType
+    {
+        if (! isset($fields)) {
+            return null;
+        }
+
+        $definitionFields = $content->getDefinition()->get('fields');
+        foreach ($fields as $fieldName) {
+            if ($definitionFields->has($fieldName)) {
+                return $definitionFields->get($fieldName);
+            }
+        }
+
+        return null;
+    }
+
+    protected function getField(Content $content, array $fields = []): ?Field
+    {
+        if (! isset($fields)) {
+            return null;
+        }
+
+        foreach ($fields as $fieldName) {
+            if ($content->hasField($fieldName)) {
+                return $content->getField($fieldName);
+            }
+        }
+
+        return null;
     }
 
     private function getExtension(): ExtensionInterface
