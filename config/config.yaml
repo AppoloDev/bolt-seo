@@ -48,7 +48,14 @@ robot_override:
     search: "noindex, follow"
 
 #templates:
-#    meta: @bolt/_metatags.twig
+#    meta: _partials/_metatags.html.twig
 
-# Don't like the easter egg? Disable it here, if you wish.
-disableeasteregg: false
+# You can override default value for specific type of route
+# This take precedence over the SEO fields in content and the default configuration
+#override_default:
+#    homepage:
+#        title: 'Homepage Title'
+#        description: 'Description'
+#    contact:
+#        title: 'Contact Title'
+#        description: 'Description'

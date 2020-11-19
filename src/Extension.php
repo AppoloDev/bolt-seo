@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Appolo\BoltSeo;
 
+use Appolo\BoltSeo\Seo\Seo;
 use Appolo\BoltSeo\Widget\SeoInjectorWidget;
 use Bolt\Extension\BaseExtension;
 use Symfony\Component\DependencyInjection\Container;
@@ -22,6 +23,15 @@ class Extension extends BaseExtension
         // This Injector Widget is used to insert CSS and JS for a field type
         // Therefore it is only inserted once even if you have multiple fields of this field type
         $this->addWidget(new SeoInjectorWidget());
+
+        $seo = new Seo(
+            $this->getTwig(),
+            $this->getConfig(),
+            $this->getBoltConfig(),
+            $this->getRequest(),
+            $this->getContainer()->get('translator')
+        );
+        $this->getTwig()->addGlobal('seo', $seo);
     }
 
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Appolo\BoltSeo\Twig;
 
 use Appolo\BoltSeo\Extension;
+use Appolo\BoltSeo\Seo\ContentField;
 use Bolt\Configuration\Config;
 use Bolt\Configuration\Content\ContentType;
 use Bolt\Entity\Content;
@@ -53,10 +54,11 @@ class SeoExtension extends AbstractExtension
     public function seoField(Content $content, string $field): ?Field
     {
         $fieldsConfig = $this->getExtensionConfig()->get('fields');
-        if(!isset($fieldsConfig[$field])) {
+        if (! isset($fieldsConfig[$field])) {
             return null;
         }
-        return $this->getField($content, $fieldsConfig[$field]);
+
+        return ContentField::getField($content, $fieldsConfig[$field]);
     }
 
     public function seoFieldValue(Content $content, string $field): string
@@ -100,41 +102,11 @@ class SeoExtension extends AbstractExtension
     public function seoFieldDefinition(Content $content, string $field): ?ContentType
     {
         $fieldsConfig = $this->getExtensionConfig()->get('fields');
-        if(!isset($fieldsConfig[$field])) {
-            return null;
-        }
-        return $this->getFieldDefinition($content, $fieldsConfig[$field]);
-    }
-
-    protected function getFieldDefinition(Content $content, array $fields = []): ?ContentType
-    {
-        if (! isset($fields)) {
+        if (! isset($fieldsConfig[$field])) {
             return null;
         }
 
-        $definitionFields = $content->getDefinition()->get('fields');
-        foreach ($fields as $fieldName) {
-            if ($definitionFields->has($fieldName)) {
-                return $definitionFields->get($fieldName);
-            }
-        }
-
-        return null;
-    }
-
-    protected function getField(Content $content, array $fields = []): ?Field
-    {
-        if (! isset($fields)) {
-            return null;
-        }
-
-        foreach ($fields as $fieldName) {
-            if ($content->hasField($fieldName)) {
-                return $content->getField($fieldName);
-            }
-        }
-
-        return null;
+        return ContentField::getFieldDefinition($content, $fieldsConfig[$field]);
     }
 
     private function getExtension(): ExtensionInterface
