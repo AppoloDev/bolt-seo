@@ -65,12 +65,12 @@ class SeoExtension extends AbstractExtension
             case 'slug':
                 $seoField = $this->seoField($content, 'slug');
 
-                return $seoField ? $seoField->__toString() : $this->translator->trans('default-title');
+                return $seoField && $seoField->__toString() ? $seoField->__toString() : $this->translator->trans('default-title');
             case 'title':
                 $title = $this->translator->trans('Default title');
                 $seoField = $this->seoField($content, 'title');
 
-                return $seoField ? $seoField->__toString() : $title;
+                return $seoField && $seoField->__toString() ? $seoField->__toString() : $title;
             case 'description':
                 $description = '
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
@@ -78,7 +78,7 @@ class SeoExtension extends AbstractExtension
                 ';
                 $seoField = $this->seoField($content, 'description');
 
-                return $seoField ? $seoField->__toString() : $description;
+                return $seoField && $seoField->__toString() ? $seoField->__toString() : $description;
             case 'postfix':
                 if ($this->getExtensionConfig()->get('title_postfix') !== false) {
                     $titleSeparator = $this->getExtensionConfig()->get('title_separator') ?: '-';

@@ -39,8 +39,6 @@ class SeoSnippet {
         if(this.inputs.title) {
             this.inputs.title.addEventListener('keyup', (e) => {
                 this.changeTarget('title');
-
-                console.log(this.inputs.slug.value);
             });
         }
         if(this.seoFieldsInputs.title) {
