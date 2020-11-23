@@ -1,0 +1,33 @@
+{
+    "name": "appolodev/bolt-seo",
+    "description": "Bolt 4 - Seo extension",
+    "type": "bolt-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AppoloDev",
+            "email": "contact@appolo.fr"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.3",
+        "twig/twig": "^2.12 | ^3.0"
+    },
+    "require-dev": {
+        "bolt/core": "^4.0.0",
+        "symplify/easy-coding-standard": "^8.1",
+        "phpstan/phpstan": "^0.12.32",
+        "phpstan/phpstan-symfony": "^0.12.6",
+        "migrify/config-transformer": "^0.4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Appolo\\BoltSeo\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "entrypoint": "Appolo\\BoltSeo\\Extension"
+    }
+}

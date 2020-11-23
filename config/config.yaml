@@ -1,0 +1,66 @@
+# The separator in the title: "Lorum ipsum | My website name"
+title_separator: "|"
+
+# The postfix to append to titles. Leave this blank to use the 'sitename' from config.yml.
+# Set it to false (no quotes!) to use no postfix at all.
+title_postfix: ''
+
+# The length used for the title and meta description. Note that increasing these values
+# will _not_ make them appear as longer snippets in Google.
+# Set a value (i.e. 255) for the `keywords_length`, to enable the meta keywords option.
+title_length: 70
+description_length: 158
+keywords_length: 0 #255
+
+# Default values to consider for the title, meta description and meta keywords
+fields:
+    slug: ['slug']
+    title: ['title', 'name']
+    description: ['introduction', 'teaser', 'description', 'body']
+    keywords: []
+    image: ['image']
+
+# The default title and description. If these are left empty, the extension will use the
+# sitename and payoff, from the global config.yml
+default:
+    title: ""
+    description: ""
+    keywords: ""
+    ogtype: "website" # default og:type value.
+    #image: "" Set absolute URL
+
+# Control who can view the more "scary" fields
+# allow:
+#    shortlink: [ chief-editor, admin, developer, root ]
+#    canonical: [ chief-editor, admin, developer, root ]
+#    robots: [ chief-editor, admin, developer, root ]
+#    ogtype: [ chief-editor, admin, developer, root ]
+
+# The default option for the `<meta name="robots" />` tag. The available options are:
+# - `index, follow` - Index this page, follow the links on this page.
+# - `noindex, follow` - Don't index this page, but follow the links on this page.
+# - `index, nofollow` - Index this page, but don't follow the links on this page.
+# - `noindex, nofollow` - Don't index this page, and don't follow the links on this page.
+# @see: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+meta_robots: "index, follow"
+
+#templates:
+#    meta: _partials/_metatags.html.twig
+
+# You can override default value for specific type of route
+# This take precedence over the SEO fields in content and the default configuration
+#override_default:
+#    homepage:
+#        title: 'Homepage Title'
+#        description: 'Description'
+#        robots: 'index, follow'
+#        ogtype: website
+#        canonical: ''
+#        image: '' # Set absolute Url
+#    contact:
+#        title: 'Contact Title'
+#        description: 'Description'
+#        robots: 'index, nofollow'
+#        ogtype: website
+#        canonical: ''
+#        image: '' # Set absolute Url
