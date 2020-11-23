@@ -27,6 +27,7 @@ default:
     description: ""
     keywords: ""
     ogtype: "website" # default og:type value.
+    #image: "" Set absolute URL
 
 # Control who can view the more "scary" fields
 # allow:
@@ -54,8 +55,12 @@ meta_robots: "index, follow"
 #        description: 'Description'
 #        robots: 'index, follow'
 #        ogtype: website
+#        canonical: ''
+#        image: '' # Set absolute Url
 #    contact:
 #        title: 'Contact Title'
 #        description: 'Description'
 #        robots: 'index, nofollow'
 #        ogtype: website
+#        canonical: ''
+#        image: '' # Set absolute Url
