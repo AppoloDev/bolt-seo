@@ -1,24 +1,32 @@
-{# {% if description|default() is not empty %}
+{% if description|default() is not empty %}
     <meta name="description" content="{{ description }}"/>
     {% if keywords|default() is not empty %}
         <meta name="keywords" content="{{ keywords }}"/>
     {% endif %}
 {% endif %}
+
+<!-- Open Graph / Facebook -->
 <meta property="og:locale" content="{{ htmllang()|replace({'-': '_'}) }}" />
-<meta property="og:type" content="{{ ogtype|default('website') }}" />
-<meta property="og:title" content="{{ title }}" />
+<meta property="og:type" content="{{ ogtype|default('website') }}">
+<meta property="og:url" content="{{ canonical }}">
+<meta property="og:title" content="{{ title }}">
 {% if description|default() is not empty %}
-    <meta property="og:description" content="{{ description }}" />
+<meta property="og:description" content="{{ description }}" />
 {% endif %}
-<meta property="og:url" content="{{ canonical }}" />
-<meta property="og:site_name" content="{{ app.config.get('general/sitename') }}" />
+<meta property="og:site_name" content="{{ config.get('general/sitename') }}" />
 {% if image|default() is not empty %}
     <meta property="og:image" content="{{ image }}" />
 {% endif %}
-<meta name="twitter:card" content="summary" />
-{% if image|default() is not empty %}
-    <meta name="twitter:image" content="{{ image }}" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="{{ canonical }}">
+<meta property="twitter:title" content="{{ title }}">
+{% if description|default() is not empty %}
+    <meta property="twitter:description" content="{{ description }}" />
 {% endif %}
+{% if image|default() is not empty %}
+    <meta property="twitter:image" content="{{ image }}" />
+{% endif %}
+
 <meta name="robots" content="{{ robots }}" />
- #}
-<meta name="plop" content="originame" />

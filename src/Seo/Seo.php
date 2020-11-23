@@ -8,6 +8,7 @@ use Bolt\Configuration\Config;
 use Bolt\Configuration\Content\ContentType;
 use Bolt\Entity\Content;
 use Bolt\Entity\Field;
+use Bolt\Utils\Html;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tightenco\Collect\Support\Collection;
@@ -140,50 +141,154 @@ class Seo
                 );
         }
 
+        if(isset($this->config['default']['title']) && $this->config['default']['title'] !== '') {
+            return $this->cleanUp($this->config['default']['title']);
+        }
+
         return $this->cleanUp($this->boltConfig->get('general/sitename'));
     }
 
-    /**
-     * @TODO
-     */
-    public function description()
+    public function description(): string
     {
         $this->initialize();
 
         if($this->defaultsOverride && $this->defaultsOverride['description']) {
-            return $this->defaultsOverride['description'];
+            $description = $this->defaultsOverride['description'];
+            return Html::trimText($description, $this->config['description_length']);
         }
 
-        return '';
+        switch ($this->routeType) {
+            case 'record':
+            case 'homepage':
+                if($this->seoData && isset($this->seoData['description']) && $this->seoData['description'] !== '') {
+                    $description = $this->cleanUp($this->seoData['description']);
+                    return Html::trimText($description, $this->config['description_length']);
+                }
+
+                if ($this->record) {
+                    $field = $this->getField($this->record, 'description');
+                    if ($field && $field->__toString() !== '') {
+                        $description = $this->cleanUp($field->__toString());
+                        return Html::trimText($description, $this->config['description_length']);
+                    }
+                }
+                break;
+        }
+
+        if(isset($this->config['default']['description']) && $this->config['default']['description'] !== '') {
+            $description = $this->cleanUp($this->config['default']['description']);
+        } else {
+            $description = $this->cleanUp($this->boltConfig->get('general/payoff'));
+        }
+
+        return Html::trimText($description, $this->config['description_length']);
     }
 
-    /**
-     * @TODO
-     */
-    public function keywords()
+    public function keywords(): string
     {
-        return [];
+        $this->initialize();
+
+        if($this->defaultsOverride && $this->defaultsOverride['keywords']) {
+            $keywords = $this->defaultsOverride['keywords'];
+            return Html::trimText($keywords, $this->config['keywords_length']);
+        }
+
+        switch ($this->routeType) {
+            case 'record':
+            case 'homepage':
+                if($this->seoData && isset($this->seoData['keywords']) && $this->seoData['keywords'] !== '') {
+                    $keywords = $this->cleanUp($this->seoData['keywords']);
+                    return Html::trimText($keywords, $this->config['keywords_length']);
+                }
+        }
+
+        if(isset($this->config['default']['keywords'])) {
+            $keywords = $this->cleanUp($this->config['default']['keywords']);
+        } else {
+            $keywords = '';
+        }
+
+        return Html::trimText($keywords, $this->config['keywords_length']);
     }
 
-    /**
-     * @TODO
-     */
     public function ogtype()
     {
-        return '';
+        $this->initialize();
+
+        if($this->defaultsOverride && $this->defaultsOverride['ogtype']) {
+            return $this->defaultsOverride['ogtype'];
+        }
+
+        switch ($this->routeType) {
+            case 'record':
+            case 'homepage':
+                if($this->seoData && isset($this->seoData['og']) && $this->seoData['og'] !== '') {
+                    return $this->cleanUp($this->seoData['og']);
+                }
+        }
+
+        if(isset($this->config['default']['ogtype'])) {
+            return $this->cleanUp($this->config['default']['ogtype']);
+        }
+
+        return 'website';
+    }
+
+    public function robots()
+    {
+        $this->initialize();
+
+        if($this->defaultsOverride && $this->defaultsOverride['robots']) {
+            return $this->defaultsOverride['robots'];
+        }
+
+        switch ($this->routeType) {
+            case 'record':
+            case 'homepage':
+                if($this->seoData && isset($this->seoData['robots']) && $this->seoData['robots'] !== '') {
+                    return $this->cleanUp($this->seoData['robots']);
+                }
+        }
+
+        if(isset($this->config['default']['robots'])) {
+            return $this->cleanUp($this->config['default']['robots']);
+        } else {
+            return 'index, follow';
+        }
     }
 
     /**
      * @TODO
+     * @return string
      */
-    public function robots()
+    public function image(): string
     {
         return '';
     }
 
-    /**
-     * @TODO
-     */
+    public function canonical(): string
+    {
+        $this->initialize();
+
+        if($this->defaultsOverride && $this->defaultsOverride['canonical']) {
+            return $this->defaultsOverride['canonical'];
+        }
+
+        switch ($this->routeType) {
+            case 'record':
+            case 'homepage':
+                if($this->seoData && isset($this->seoData['canonical']) && $this->seoData['canonical'] !== '') {
+                    return $this->cleanUp($this->seoData['canonical']);
+                }
+        }
+
+        if(isset($this->config['default']['canonical'])) {
+            return $this->cleanUp($this->config['default']['canonical']);
+        }
+
+        return $this->request->getUri();
+    }
+
     public function metatags()
     {
         $this->initialize();
@@ -192,14 +297,13 @@ class Seo
             'title' => $this->title(),
             'description' => $this->description(),
             'keywords' => $this->keywords(),
-            'image' => $this->findImage(),
+            'image' => $this->image(),
             'robots' => $this->robots(),
             'ogtype' => $this->ogtype(),
-            //$this->app['resources']->getUrl('canonicalurl'),
-            'canonical' => ''
+            'canonical' => $this->canonical()
         ];
 
-        $html = $this->twig->render($this->templateMetas, []);
+        $html = $this->twig->render($this->templateMetas, $vars);
         return new Markup($html, 'UTF-8');
     }
 
@@ -217,32 +321,12 @@ class Seo
 
     /**
      * @TODO
-     * @return string
-     */
-    private function findImage()
-    {
-        return '';
-    }
-
-    /**
-     * @TODO
      */
     private function findImageHelper($fieldname, $field = null, $imageField = null)
     {
 
     }
 
-    /**
-     * @TODO
-     */
-    public function setCanonical($canonical = '')
-    {
-
-    }
-
-    /**
-     * @TODO
-     */
     private function cleanUp(string $string): string
     {
         $string = strip_tags($string);

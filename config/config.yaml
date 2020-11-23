@@ -25,6 +25,7 @@ fields:
 default:
     title: ""
     description: ""
+    keywords: ""
     ogtype: "website" # default og:type value.
 
 # Control who can view the more "scary" fields
@@ -42,11 +43,6 @@ default:
 # @see: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
 meta_robots: "index, follow"
 
-robot_override:
-    contentlisting: "noindex, follow"
-    taxonomylink: "noindex, follow"
-    search: "noindex, follow"
-
 #templates:
 #    meta: _partials/_metatags.html.twig
 
@@ -56,6 +52,10 @@ robot_override:
 #    homepage:
 #        title: 'Homepage Title'
 #        description: 'Description'
+#        robots: 'index, follow'
+#        ogtype: website
 #    contact:
 #        title: 'Contact Title'
 #        description: 'Description'
+#        robots: 'index, nofollow'
+#        ogtype: website
