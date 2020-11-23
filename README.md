@@ -10,6 +10,10 @@ indexing of your Bolt website in a number of ways. It does this by:
   - Override the canonical, if you really want to.
   - Set the `<meta name="robots">`-tag.
 
+Installation
+-----
+```composer require appolodev/bolt-seo```
+
 Setup
 -----
 
