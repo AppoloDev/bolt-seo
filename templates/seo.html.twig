@@ -42,7 +42,7 @@
 
         <div id="field-{{ name }}-title_postfix" class="form--helper">
             <p>{{ __("Will be used as the <tt>&lt;title&gt;</tt> and in search engines") }}.
-                {{ __("Limit the length to %s characters", {'%s': seoconfig.title_length|default(70)}) }}.</p>
+                {{ __("Limit the length to %number% characters", {'%number%': seoconfig.title_length|default(70)}) }}.</p>
         </div>
     </div>
 {% endblock %}
@@ -66,7 +66,7 @@
 
         <div id="field-{{ name }}-description_postfix" class="form--helper">
             <p>{{ __('Will be used as the <tt>&lt;meta name="description"&gt;</tt>, and will show up in search engines') }}.
-                {{ __("Limit the length to %s characters", {'%s': seoconfig.description_length|default(158)}) }}.</p>
+                {{ __("Limit the length to %number% characters", {'%number%': seoconfig.description_length|default(158)}) }}.</p>
         </div>
     </div>
 {% endblock %}
@@ -154,7 +154,7 @@
 
         <div id="field-{{ name }}-shortlink_postfix" class="form--helper">
             <p>
-                {{ __("Use this to create an alias or shortlink to this record. Be sure to make it an absolute link, starting with a <tt>/</tt>") }}
+                {{ __("Use this to create an alias or shortlink to this record. Be sure to make it an absolute link.") }}
                 .
             </p>
         </div>
