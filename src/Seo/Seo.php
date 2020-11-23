@@ -257,13 +257,30 @@ class Seo
         }
     }
 
-    /**
-     * @TODO
-     * @return string
-     */
     public function image(): string
     {
-        return '';
+        $this->initialize();
+
+        if($this->defaultsOverride && $this->defaultsOverride['image']) {
+            return $this->defaultsOverride['image'];
+        }
+
+        switch ($this->routeType) {
+            case 'record':
+            case 'homepage':
+            if ($this->record) {
+                $field = $this->getField($this->record, 'image');
+                if ($field && $field->__toString() !== '') {
+                    return $this->request->getSchemeAndHttpHost().$this->cleanUp($field->__toString());
+                }
+            }
+        }
+
+        if(isset($this->config['default']['image'])) {
+            return $this->cleanUp($this->config['default']['image']);
+        } else {
+            return '';
+        }
     }
 
     public function canonical(): string
@@ -317,14 +334,6 @@ class Seo
                 $this->config->get('title_postfix') !== '' ? $this->config->get('title_postfix') : $this->boltConfig->get('general/sitename')
             );
         }
-    }
-
-    /**
-     * @TODO
-     */
-    private function findImageHelper($fieldname, $field = null, $imageField = null)
-    {
-
     }
 
     private function cleanUp(string $string): string
