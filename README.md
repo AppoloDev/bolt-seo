@@ -72,3 +72,7 @@ good idea, feel free to open an issue on the tracker at the
 [SEO Extension repository][gh] on Github.
 
 [gh]: https://github.com/AppoloDev/bolt-seo/issues
+
+### Contributors
+
+* [Bob den Otter](https://github.com/bobdenotter): Thanks to him to allow me to use his original extension [Bolt SEO](https://github.com/bobdenotter/seo)
