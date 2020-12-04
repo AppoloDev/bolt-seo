@@ -123,12 +123,7 @@ class Seo
                 break;
             case 'listing':
                 return $this->cleanUp(
-                    $this->translator->trans(
-                        'Listing of %contenttype%',
-                        [
-                            '%contenttype%' => $this->contentType->get('name')
-                        ]
-                    ).$this->postfixTitle()
+                    $this->contentType->get('name').$this->postfixTitle()
                 );
             case 'taxonomy':
                 return $this->cleanUp(
