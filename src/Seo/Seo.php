@@ -94,7 +94,7 @@ class Seo
                 break;
             case 'listing':
                 $contentTypeSlug = $this->request->get('contentTypeSlug');
-                $this->contentType = $this->boltConfig->get('contenttypes/'.$contentTypeSlug);
+                $this->contentType = $this->boltConfig->getContentType($contentTypeSlug);
                 break;
         }
     }
