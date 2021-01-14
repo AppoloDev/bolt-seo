@@ -4,6 +4,7 @@
 
 {% block field %}
     {% set seoconfig = seoGetConfig() %}
+    {% set seovalues = value|json_decode %}
 
     <div id="field-set-{{ name }}" class="form-group form-set is-normal">
         {% include '@bolt/_partials/fields/_label.html.twig' %}
