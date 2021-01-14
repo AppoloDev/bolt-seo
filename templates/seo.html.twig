@@ -60,9 +60,7 @@
                 class="form-control"
                 id="seofields-description"
                 style="height: 80px;"
-            >
-                {{ seovalues.description|default('') }}
-            </textarea>
+            >{{ seovalues.description|default('') }}</textarea>
         </div>
 
         <div id="field-{{ name }}-description_postfix" class="form--helper">
@@ -124,6 +122,7 @@
                 data-field-title="{{ titleField ? 'fields['~titleField.slug~']' : '' }}"
                 data-field-description="{{ descriptionField ? 'fields['~descriptionField.slug~']' : '' }}"
                 data-field-slug="{{ slugField ? 'fields['~slugField.slug~']' : '' }}"
+                data-seo-field="{{ name }}"
             >
                 <div class="url">
                     <span class="url"></span>
@@ -201,10 +200,7 @@
                 class="form-control"
             >
                 {% for option in ['index, follow', 'noindex, follow', 'index, nofollow', 'noindex, nofollow', 'noodp' ] %}
-                    <option
-                        value="{{ option }}"
-{# TODO {% if seovalues.robots == option %}selected{% endif %} #}
-                    >
+                    <option value="{{ option }}" {% if seovalues.robots == option %}selected{% endif %}>
                         {{ option }}
                     </option>
                 {% endfor %}
@@ -234,7 +230,7 @@
                     id="seofields-og"
                     maxlength="255"
                     type="text"
-                    value="{{ seovalues.ogtype|default('') }}"
+                    value="{{ seovalues.og|default('') }}"
             />
         </div>
 
