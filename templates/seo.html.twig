@@ -4,7 +4,16 @@
 
 {% block field %}
     {% set seoconfig = seoGetConfig() %}
-    {% set seovalues = value|json_decode %}
+    {% set defaultValues = {
+        title: '',
+        description: '',
+        keywords: '',
+        shortlink: '',
+        canonical: '',
+        robots: '',
+        og: ''
+    }|json_encode %}
+    {% set seovalues = value|default(defaultValues)|json_decode %}
 
     <div id="field-set-{{ name }}" class="form-group form-set is-normal">
         {% include '@bolt/_partials/fields/_label.html.twig' %}
@@ -21,7 +30,7 @@
         </div>
     </div>
 
-    <input type="hidden" name="{{ name }}" id="{{ id }}" value="{{ value }}">
+    <input type="hidden" name="{{ name }}" id="{{ id }}" value="{{ value|default(defaultValues) }}">
 {% endblock %}
 
 {% block seo_title %}
@@ -200,7 +209,7 @@
                 class="form-control"
             >
                 {% for option in ['index, follow', 'noindex, follow', 'index, nofollow', 'noindex, nofollow', 'noodp' ] %}
-                    <option value="{{ option }}" {% if seovalues.robots == option %}selected{% endif %}>
+                    <option value="{{ option }}" {% if seovalues.robots is defined and seovalues.robots == option %}selected{% endif %}>
                         {{ option }}
                     </option>
                 {% endfor %}
