@@ -4,6 +4,16 @@
 
 {% block field %}
     {% set seoconfig = seoGetConfig() %}
+    {% set defaultValues = {
+        title: '',
+        description: '',
+        keywords: '',
+        shortlink: '',
+        canonical: '',
+        robots: '',
+        og: ''
+    }|json_encode %}
+    {% set seovalues = value|default(defaultValues)|json_decode %}
 
     <div id="field-set-{{ name }}" class="form-group form-set is-normal">
         {% include '@bolt/_partials/fields/_label.html.twig' %}
@@ -20,7 +30,7 @@
         </div>
     </div>
 
-    <input type="hidden" name="{{ name }}" id="{{ id }}" value="{{ value }}">
+    <input type="hidden" name="{{ name }}" id="{{ id }}" value="{{ value|default(defaultValues) }}">
 {% endblock %}
 
 {% block seo_title %}
@@ -59,9 +69,7 @@
                 class="form-control"
                 id="seofields-description"
                 style="height: 80px;"
-            >
-                {{ seovalues.description|default('') }}
-            </textarea>
+            >{{ seovalues.description|default('') }}</textarea>
         </div>
 
         <div id="field-{{ name }}-description_postfix" class="form--helper">
@@ -123,6 +131,7 @@
                 data-field-title="{{ titleField ? 'fields['~titleField.slug~']' : '' }}"
                 data-field-description="{{ descriptionField ? 'fields['~descriptionField.slug~']' : '' }}"
                 data-field-slug="{{ slugField ? 'fields['~slugField.slug~']' : '' }}"
+                data-seo-field="{{ name }}"
             >
                 <div class="url">
                     <span class="url"></span>
@@ -200,10 +209,7 @@
                 class="form-control"
             >
                 {% for option in ['index, follow', 'noindex, follow', 'index, nofollow', 'noindex, nofollow', 'noodp' ] %}
-                    <option
-                        value="{{ option }}"
-{# TODO {% if seovalues.robots == option %}selected{% endif %} #}
-                    >
+                    <option value="{{ option }}" {% if seovalues.robots is defined and seovalues.robots == option %}selected{% endif %}>
                         {{ option }}
                     </option>
                 {% endfor %}
@@ -233,7 +239,7 @@
                     id="seofields-og"
                     maxlength="255"
                     type="text"
-                    value="{{ seovalues.ogtype|default('') }}"
+                    value="{{ seovalues.og|default('') }}"
             />
         </div>
 
