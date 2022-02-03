@@ -85,12 +85,8 @@ class Seo
                 $this->contentType = $this->boltConfig->getContentType($contentTypeSlug);
                 break;
             default:
-                if(!$this->record) {
-                    $this->record = isset($this->twig->getGlobals()['record'])
-                        ? $this->twig->getGlobals()['record']
-                        : null
-                    ;
-
+                if(!$this->record && isset($this->twig->getGlobals()['record'])) {
+                    $this->record = $this->twig->getGlobals()['record'];
                     $field = $this->getSeoField($this->record);
                     $this->seoData = $field && $field->__toString() ? json_decode($field->__toString(), true) : null;
                 }
