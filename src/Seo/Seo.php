@@ -80,8 +80,11 @@ class Seo
         }
 
         switch ($this->routeType) {
-            case 'record':
-            case 'homepage':
+            case 'listing':
+                $contentTypeSlug = $this->request->get('contentTypeSlug');
+                $this->contentType = $this->boltConfig->getContentType($contentTypeSlug);
+                break;
+            default:
                 if(!$this->record) {
                     $this->record = isset($this->twig->getGlobals()['record'])
                         ? $this->twig->getGlobals()['record']
@@ -91,10 +94,6 @@ class Seo
                     $field = $this->getSeoField($this->record);
                     $this->seoData = $field && $field->__toString() ? json_decode($field->__toString(), true) : null;
                 }
-                break;
-            case 'listing':
-                $contentTypeSlug = $this->request->get('contentTypeSlug');
-                $this->contentType = $this->boltConfig->getContentType($contentTypeSlug);
                 break;
         }
     }
@@ -108,19 +107,6 @@ class Seo
         }
 
         switch ($this->routeType) {
-            case 'record':
-            case 'homepage':
-                if($this->seoData && isset($this->seoData['title']) && $this->seoData['title'] !== '') {
-                    return $this->cleanUp($this->seoData['title'].$this->postfixTitle());
-                }
-
-                if ($this->record) {
-                    $field = $this->getField($this->record, 'title');
-                    if ($field && $field->__toString() !== '') {
-                        return $this->cleanUp($field->__toString().$this->postfixTitle());
-                    }
-                }
-                break;
             case 'listing':
                 return $this->cleanUp(
                     $this->contentType->get('name').$this->postfixTitle()
@@ -134,6 +120,18 @@ class Seo
                         ]
                     ).$this->postfixTitle()
                 );
+            default:
+                if($this->seoData && isset($this->seoData['title']) && $this->seoData['title'] !== '') {
+                    return $this->cleanUp($this->seoData['title'].$this->postfixTitle());
+                }
+
+                if ($this->record) {
+                    $field = $this->getField($this->record, 'title');
+                    if ($field && $field->__toString() !== '') {
+                        return $this->cleanUp($field->__toString().$this->postfixTitle());
+                    }
+                }
+                break;
         }
 
         if(isset($this->config['default']['title']) && $this->config['default']['title'] !== '') {
@@ -152,22 +150,17 @@ class Seo
             return Html::trimText($description, $this->config['description_length']);
         }
 
-        switch ($this->routeType) {
-            case 'record':
-            case 'homepage':
-                if($this->seoData && isset($this->seoData['description']) && $this->seoData['description'] !== '') {
-                    $description = $this->cleanUp($this->seoData['description']);
-                    return Html::trimText($description, $this->config['description_length']);
-                }
+        if($this->seoData && isset($this->seoData['description']) && $this->seoData['description'] !== '') {
+            $description = $this->cleanUp($this->seoData['description']);
+            return Html::trimText($description, $this->config['description_length']);
+        }
 
-                if ($this->record) {
-                    $field = $this->getField($this->record, 'description');
-                    if ($field && $field->__toString() !== '') {
-                        $description = $this->cleanUp($field->__toString());
-                        return Html::trimText($description, $this->config['description_length']);
-                    }
-                }
-                break;
+        if ($this->record) {
+            $field = $this->getField($this->record, 'description');
+            if ($field && $field->__toString() !== '') {
+                $description = $this->cleanUp($field->__toString());
+                return Html::trimText($description, $this->config['description_length']);
+            }
         }
 
         if(isset($this->config['default']['description']) && $this->config['default']['description'] !== '') {
@@ -188,13 +181,9 @@ class Seo
             return Html::trimText($keywords, $this->config['keywords_length']);
         }
 
-        switch ($this->routeType) {
-            case 'record':
-            case 'homepage':
-                if($this->seoData && isset($this->seoData['keywords']) && $this->seoData['keywords'] !== '') {
-                    $keywords = $this->cleanUp($this->seoData['keywords']);
-                    return Html::trimText($keywords, $this->config['keywords_length']);
-                }
+        if($this->seoData && isset($this->seoData['keywords']) && $this->seoData['keywords'] !== '') {
+            $keywords = $this->cleanUp($this->seoData['keywords']);
+            return Html::trimText($keywords, $this->config['keywords_length']);
         }
 
         if(isset($this->config['default']['keywords'])) {
@@ -214,12 +203,8 @@ class Seo
             return $this->defaultsOverride['ogtype'];
         }
 
-        switch ($this->routeType) {
-            case 'record':
-            case 'homepage':
-                if($this->seoData && isset($this->seoData['og']) && $this->seoData['og'] !== '') {
-                    return $this->cleanUp($this->seoData['og']);
-                }
+        if($this->seoData && isset($this->seoData['og']) && $this->seoData['og'] !== '') {
+            return $this->cleanUp($this->seoData['og']);
         }
 
         if(isset($this->config['default']['ogtype'])) {
@@ -237,12 +222,8 @@ class Seo
             return $this->defaultsOverride['robots'];
         }
 
-        switch ($this->routeType) {
-            case 'record':
-            case 'homepage':
-                if($this->seoData && isset($this->seoData['robots']) && $this->seoData['robots'] !== '') {
-                    return $this->cleanUp($this->seoData['robots']);
-                }
+        if($this->seoData && isset($this->seoData['robots']) && $this->seoData['robots'] !== '') {
+            return $this->cleanUp($this->seoData['robots']);
         }
 
         if(isset($this->config['default']['robots'])) {
@@ -260,14 +241,10 @@ class Seo
             return $this->defaultsOverride['image'];
         }
 
-        switch ($this->routeType) {
-            case 'record':
-            case 'homepage':
-            if ($this->record) {
-                $field = $this->getField($this->record, 'image');
-                if ($field && $field->__toString() !== '') {
-                    return $this->request->getSchemeAndHttpHost().$this->cleanUp($field->__toString());
-                }
+        if ($this->record) {
+            $field = $this->getField($this->record, 'image');
+            if ($field && $field->__toString() !== '') {
+                return $this->request->getSchemeAndHttpHost().$this->cleanUp($field->__toString());
             }
         }
 
@@ -286,12 +263,8 @@ class Seo
             return $this->defaultsOverride['canonical'];
         }
 
-        switch ($this->routeType) {
-            case 'record':
-            case 'homepage':
-                if($this->seoData && isset($this->seoData['canonical']) && $this->seoData['canonical'] !== '') {
-                    return $this->cleanUp($this->seoData['canonical']);
-                }
+        if($this->seoData && isset($this->seoData['canonical']) && $this->seoData['canonical'] !== '') {
+            return $this->cleanUp($this->seoData['canonical']);
         }
 
         if(isset($this->config['default']['canonical'])) {
