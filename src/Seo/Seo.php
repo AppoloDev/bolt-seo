@@ -248,7 +248,7 @@ class Seo
             return $this->cleanUp($this->config['default']['image']);
         }
 
-        if (!empty($this->record->getExtras()['image'])) {
+        if ($this->record instanceof Content && !empty($this->record->getExtras()['image'])) {
             return $this->record->getExtras()['image']['url'];
         }
 
