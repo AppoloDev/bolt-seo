@@ -246,9 +246,13 @@ class Seo
 
         if(isset($this->config['default']['image'])) {
             return $this->cleanUp($this->config['default']['image']);
-        } else {
-            return '';
         }
+
+        if (!empty($this->record->getExtras()['image'])) {
+            return $this->record->getExtras()['image']['url'];
+        }
+
+        return '';
     }
 
     public function canonical(): string
