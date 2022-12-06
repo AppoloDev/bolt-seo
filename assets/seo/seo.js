@@ -101,8 +101,7 @@ class SeoSnippet {
     }
 }
 
-
-window.addEventListener("DOMContentLoaded", (event) => {
+document.addEventListener("DOMContentLoaded", (event) => {
     const seoSnippet = document.querySelector('.seo_snippet');
     if (seoSnippet) {
         new SeoSnippet(seoSnippet);
