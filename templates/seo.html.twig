@@ -13,7 +13,7 @@
         robots: '',
         og: ''
     }|json_encode %}
-    {% if value is not json %}
+    {% if value is empty or value is not json %}
         {% set value = defaultValues %}
     {% endif %}
     {% set seovalues = value|json_decode %}
