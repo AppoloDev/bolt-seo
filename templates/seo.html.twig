@@ -13,7 +13,10 @@
         robots: '',
         og: ''
     }|json_encode %}
-    {% set seovalues = value|default(defaultValues)|json_decode %}
+    {% if value is empty or value is not json %}
+        {% set value = defaultValues %}
+    {% endif %}
+    {% set seovalues = value|json_decode %}
 
     <div id="field-set-{{ name }}" class="form-group form-set is-normal">
         {% include '@bolt/_partials/fields/_label.html.twig' %}
