@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="fr">
+  <file id="messages.fr">
+    <unit id="4TCRcpL" name="SEO Title">
+      <segment>
+        <source>SEO Title</source>
+        <target>Titre SEO</target>
+      </segment>
+    </unit>
+    <unit id="3p.vSSI" name="Will be used as the &lt;tt&gt;&amp;lt;title&amp;gt;&lt;/tt&gt; and in search engines">
+      <segment>
+        <source>Will be used as the &lt;tt&gt;&amp;lt;title&amp;gt;&lt;/tt&gt; and in search engines</source>
+        <target><![CDATA[Sera utilisé comme <tt>&lt;title&gt;</tt> et dans les moteurs de recherche]]></target>
+      </segment>
+    </unit>
+    <unit id="HdE0ldo" name="Limit the length to %number% characters">
+      <segment>
+        <source>Limit the length to %number% characters</source>
+        <target>Limiter la longueur à %number% caractères</target>
+      </segment>
+    </unit>
+    <unit id="JPCo9LS" name="Meta description">
+      <segment>
+        <source>Meta description</source>
+        <target>Meta description</target>
+      </segment>
+    </unit>
+    <unit id="2PqBQn1" name="Google snippet preview">
+      <segment>
+        <source>Google snippet preview</source>
+        <target>Aperçu de l'extrait Google</target>
+      </segment>
+    </unit>
+    <unit id="L.07lHq" name="Default title">
+      <segment>
+        <source>Default title</source>
+        <target>Titre par défaut</target>
+      </segment>
+    </unit>
+    <unit id="ORnQHm." name="Shortlink">
+      <segment>
+        <source>Shortlink</source>
+        <target>Lien court</target>
+      </segment>
+    </unit>
+    <unit id="GgpqNso" name="alias">
+      <segment>
+        <source>alias</source>
+        <target>alias</target>
+      </segment>
+    </unit>
+    <unit id="..3kd27" name="Canonical Link">
+      <segment>
+        <source>Canonical Link</source>
+        <target>Lien canonique</target>
+      </segment>
+    </unit>
+    <unit id="pCpmxa8" name="Use this to create an alias or shortlink to this record. Be sure to make it an absolute link.">
+      <segment>
+        <source>Use this to create an alias or shortlink to this record. Be sure to make it an absolute link.</source>
+        <target>Utilisez-le pour créer un alias ou un lien court vers cet enregistrement. Assurez-vous que celui-ci est un lien absolu.</target>
+      </segment>
+    </unit>
+    <unit id="FwLQ5cl" name="Use with caution, and only if you know what you're doing">
+      <segment>
+        <source>Use with caution, and only if you know what you're doing</source>
+        <target>À utiliser avec précaution et uniquement si vous savez ce que vous faites</target>
+      </segment>
+    </unit>
+    <unit id="n3BhrCh" name="Meta Robots Tag">
+      <segment>
+        <source>Meta Robots Tag</source>
+        <target>Balise Meta Robots</target>
+      </segment>
+    </unit>
+    <unit id="JEVKWPy" name="Open Graph Type">
+      <segment>
+        <source>Open Graph Type</source>
+        <target>Type d'Open Graph</target>
+      </segment>
+    </unit>
+    <unit id="johNrI3" name="Leave blank for the default">
+      <segment>
+        <source>Leave blank for the default</source>
+        <target>Laisser vide pour utiliser la valeur par défaut</target>
+      </segment>
+    </unit>
+    <unit id="CJ8orGK" name="Will be used as the &lt;tt&gt;&amp;lt;meta name=&quot;description&quot;&amp;gt;&lt;/tt&gt;, and will show up in search engines">
+      <segment>
+        <source>Will be used as the &lt;tt&gt;&amp;lt;meta name="description"&amp;gt;&lt;/tt&gt;, and will show up in search engines</source>
+        <target><![CDATA[Sera utilisé comme <tt>&lt;meta name="description"&gt;</tt>, et apparaîtra dans les moteurs de recherche]]></target>
+      </segment>
+    </unit>
+    <unit id="0XJxYrt" name="Use this to override the &lt;tt&gt;&amp;lt;link rel=&quot;canonical&quot;&amp;gt;&lt;/tt&gt;">
+      <segment>
+        <source>Use this to override the &lt;tt&gt;&amp;lt;link rel="canonical"&amp;gt;&lt;/tt&gt;</source>
+        <target><![CDATA[Utilisez ceci pour remplacer le <tt>&lt;link rel="canonical"&gt;</tt>]]></target>
+      </segment>
+    </unit>
+    <unit id="tGAPy_h" name="Use this to set the &lt;tt&gt;&amp;lt;meta name=&quot;robots&quot;&amp;gt;&lt;/tt&gt;">
+      <segment>
+        <source>Use this to set the &lt;tt&gt;&amp;lt;meta name="robots"&amp;gt;&lt;/tt&gt;</source>
+        <target><![CDATA[Utilisez ceci pour remplacer le <tt>&lt;meta name="robots"&gt;</tt>]]></target>
+      </segment>
+    </unit>
+    <unit id="HxdlzS6" name="Use this to set the &lt;tt&gt;&amp;lt;meta name=&quot;og:type&quot;&amp;gt;&lt;/tt&gt;">
+      <segment>
+        <source>Use this to set the &lt;tt&gt;&amp;lt;meta name="og:type"&amp;gt;&lt;/tt&gt;</source>
+        <target><![CDATA[Utilisez ceci pour remplacer le <tt>&lt;meta name="og:type"&gt;</tt>]]></target>
+      </segment>
+    </unit>
+  </file>
+</xliff>
