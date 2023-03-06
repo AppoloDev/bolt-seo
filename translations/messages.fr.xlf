@@ -10,13 +10,13 @@
     <unit id="3p.vSSI" name="Will be used as the &lt;tt&gt;&amp;lt;title&amp;gt;&lt;/tt&gt; and in search engines">
       <segment>
         <source>Will be used as the &lt;tt&gt;&amp;lt;title&amp;gt;&lt;/tt&gt; and in search engines</source>
-        <target><![CDATA[Sera utilisé comme <tt>&lt;title&gt;</tt> et dans les moteurs de recherche]]></target>
+        <target><![CDATA[Sera utilisé dans la balise <tt>&lt;title&gt;</tt> de la page et dans les moteurs de recherche]]></target>
       </segment>
     </unit>
     <unit id="HdE0ldo" name="Limit the length to %number% characters">
       <segment>
         <source>Limit the length to %number% characters</source>
-        <target>Limiter la longueur à %number% caractères</target>
+        <target>Longueur recommandée à %number% caractères</target>
       </segment>
     </unit>
     <unit id="JPCo9LS" name="Meta description">
@@ -58,7 +58,7 @@
     <unit id="pCpmxa8" name="Use this to create an alias or shortlink to this record. Be sure to make it an absolute link.">
       <segment>
         <source>Use this to create an alias or shortlink to this record. Be sure to make it an absolute link.</source>
-        <target>Utilisez-le pour créer un alias ou un lien court vers cet enregistrement. Assurez-vous que celui-ci est un lien absolu.</target>
+        <target>Utilisez-le pour créer un alias ou un lien court vers cet enregistrement. Assurez-vous qu'il soit un lien absolu.</target>
       </segment>
     </unit>
     <unit id="FwLQ5cl" name="Use with caution, and only if you know what you're doing">
@@ -88,25 +88,25 @@
     <unit id="CJ8orGK" name="Will be used as the &lt;tt&gt;&amp;lt;meta name=&quot;description&quot;&amp;gt;&lt;/tt&gt;, and will show up in search engines">
       <segment>
         <source>Will be used as the &lt;tt&gt;&amp;lt;meta name="description"&amp;gt;&lt;/tt&gt;, and will show up in search engines</source>
-        <target><![CDATA[Sera utilisé comme <tt>&lt;meta name="description"&gt;</tt>, et apparaîtra dans les moteurs de recherche]]></target>
+        <target><![CDATA[Sera utilisée dans la balise <tt>&lt;meta name="description"&gt;</tt> de la page et dans les moteurs de recherche]]></target>
       </segment>
     </unit>
     <unit id="0XJxYrt" name="Use this to override the &lt;tt&gt;&amp;lt;link rel=&quot;canonical&quot;&amp;gt;&lt;/tt&gt;">
       <segment>
         <source>Use this to override the &lt;tt&gt;&amp;lt;link rel="canonical"&amp;gt;&lt;/tt&gt;</source>
-        <target><![CDATA[Utilisez ceci pour remplacer le <tt>&lt;link rel="canonical"&gt;</tt>]]></target>
+        <target><![CDATA[Utilisez-le pour remplacer la balise <tt>&lt;link rel="canonical"&gt;</tt>]]></target>
       </segment>
     </unit>
     <unit id="tGAPy_h" name="Use this to set the &lt;tt&gt;&amp;lt;meta name=&quot;robots&quot;&amp;gt;&lt;/tt&gt;">
       <segment>
         <source>Use this to set the &lt;tt&gt;&amp;lt;meta name="robots"&amp;gt;&lt;/tt&gt;</source>
-        <target><![CDATA[Utilisez ceci pour remplacer le <tt>&lt;meta name="robots"&gt;</tt>]]></target>
+        <target><![CDATA[Utilisez-le pour remplacer la balise <tt>&lt;meta name="robots"&gt;</tt>]]></target>
       </segment>
     </unit>
     <unit id="HxdlzS6" name="Use this to set the &lt;tt&gt;&amp;lt;meta name=&quot;og:type&quot;&amp;gt;&lt;/tt&gt;">
       <segment>
         <source>Use this to set the &lt;tt&gt;&amp;lt;meta name="og:type"&amp;gt;&lt;/tt&gt;</source>
-        <target><![CDATA[Utilisez ceci pour remplacer le <tt>&lt;meta name="og:type"&gt;</tt>]]></target>
+        <target><![CDATA[Utilisez ceci pour remplacer la balise <tt>&lt;meta name="og:type"&gt;</tt>]]></target>
       </segment>
     </unit>
   </file>
