@@ -12,6 +12,7 @@ use Bolt\Entity\Content;
 use Bolt\Entity\Field;
 use Bolt\Extension\ExtensionInterface;
 use Bolt\Extension\ExtensionRegistry;
+use Bolt\Utils\Html;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Tightenco\Collect\Support\Collection;
 use Twig\Extension\AbstractExtension;
@@ -51,14 +52,20 @@ class SeoExtension extends AbstractExtension
         return $this->getExtensionConfig()->toArray();
     }
 
-    public function seoField(Content $content, string $field): ?Field
+    public function seoField(Content $content, string $field): ?string
     {
         $fieldsConfig = $this->getExtensionConfig()->get('fields');
         if (! isset($fieldsConfig[$field])) {
             return null;
         }
 
-        return ContentField::getField($content, $fieldsConfig[$field]);
+        $field = ContentField::getField($content, $fieldsConfig[$field]);
+
+        if (! $field instanceof Field) {
+            return null;
+        }
+
+        return Html::trimText($field->__toString(), 300);
     }
 
     public function seoFieldValue(Content $content, string $field): string
@@ -67,12 +74,11 @@ class SeoExtension extends AbstractExtension
             case 'slug':
                 $seoField = $this->seoField($content, 'slug');
 
-                return $seoField && $seoField->__toString() ? $seoField->__toString() : $this->translator->trans('default-title');
+                return $seoField ?: $this->translator->trans('default-title');
             case 'title':
-                $title = $this->translator->trans('Default title');
                 $seoField = $this->seoField($content, 'title');
 
-                return $seoField && $seoField->__toString() ? $seoField->__toString() : $title;
+                return $seoField ?: $this->translator->trans('Default title');
             case 'description':
                 $description = '
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
@@ -80,7 +86,7 @@ class SeoExtension extends AbstractExtension
                 ';
                 $seoField = $this->seoField($content, 'description');
 
-                return $seoField && $seoField->__toString() ? $seoField->__toString() : $description;
+                return $seoField ?: $description;
             case 'postfix':
                 if ($this->getExtensionConfig()->get('title_postfix') !== false) {
                     $titleSeparator = $this->getExtensionConfig()->get('title_separator') ?: '-';
