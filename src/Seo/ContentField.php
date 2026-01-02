@@ -12,7 +12,7 @@ class ContentField
 {
     public static function getFieldDefinition(Content $content, array $fields = []): ?ContentType
     {
-        if (!isset($fields)) {
+        if (! isset($fields)) {
             return null;
         }
 
@@ -28,7 +28,7 @@ class ContentField
 
     public static function getField(Content $content, array $fields = []): ?Field
     {
-        if (!isset($fields)) {
+        if (! isset($fields)) {
             return null;
         }
 

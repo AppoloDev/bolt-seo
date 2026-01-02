@@ -12,8 +12,8 @@ use Bolt\Entity\Field;
 use Bolt\Extension\ExtensionInterface;
 use Bolt\Extension\ExtensionRegistry;
 use Bolt\Utils\Html;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Illuminate\Support\Collection;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
