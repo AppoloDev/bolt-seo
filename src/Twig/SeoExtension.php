@@ -19,27 +19,17 @@ use Twig\TwigFunction;
 
 class SeoExtension extends AbstractExtension
 {
-    private ExtensionRegistry $extensionRegistry;
-    private TranslatorInterface $translator;
-    private Config $config;
-
-    public function __construct(
-        ExtensionRegistry $extensionRegistry,
-        TranslatorInterface $translator,
-        Config $config
-    ) {
-        $this->extensionRegistry = $extensionRegistry;
-        $this->translator = $translator;
-        $this->config = $config;
+    public function __construct(private readonly ExtensionRegistry $extensionRegistry, private readonly TranslatorInterface $translator, private readonly Config $config)
+    {
     }
 
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('seoGetConfig', [$this, 'seoGetConfig']),
-            new TwigFunction('seoFieldValue', [$this, 'seoFieldValue']),
-            new TwigFunction('seoFieldDefinition', [$this, 'seoFieldDefinition']),
-            new TwigFunction('seoField', [$this, 'seoField']),
+            new TwigFunction('seoGetConfig', $this->seoGetConfig(...)),
+            new TwigFunction('seoFieldValue', $this->seoFieldValue(...)),
+            new TwigFunction('seoFieldDefinition', $this->seoFieldDefinition(...)),
+            new TwigFunction('seoField', $this->seoField(...)),
         ];
     }
 

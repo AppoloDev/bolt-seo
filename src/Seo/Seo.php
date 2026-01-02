@@ -26,11 +26,6 @@ use Twig\Markup;
 class Seo
 {
     protected string $templateMetas = '@seo/_metatags.html.twig';
-    private Environment $twig;
-    private Collection $config;
-    private Config $boltConfig;
-    private TranslatorInterface $translator;
-    private Request $request;
     protected ?Content $record = null;
     protected ?ContentType $contentType = null;
     protected ?string $routeType;
@@ -38,27 +33,21 @@ class Seo
     protected array $seoData = [];
 
     public function __construct(
-        Environment $twig,
-        Collection $config,
-        Config $boltConfig,
-        Request $request,
-        TranslatorInterface $translator
+        private readonly Environment $twig,
+        private Collection $config,
+        private readonly Config $boltConfig,
+        private readonly Request $request,
+        private readonly TranslatorInterface $translator
     ) {
-        $this->twig = $twig;
-        $this->config = $config;
-        $this->boltConfig = $boltConfig;
-        $this->request = $request;
-
         $templateConfig = $this->config->get('templates');
         if ($templateConfig && isset($templateConfig['meta']) && $templateConfig['meta'] !== '') {
             $this->templateMetas = $templateConfig['meta'];
         }
 
         $this->routeType = $this->request->attributes->get('_route');
-        $this->translator = $translator;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         if (
             ! $this->defaultsOverride &&
@@ -262,7 +251,7 @@ class Seo
         return $this->request->getUri();
     }
 
-    public function metatags()
+    public function metatags(): Markup
     {
         $this->initialize();
 
