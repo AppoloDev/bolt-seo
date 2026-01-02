@@ -10,6 +10,15 @@ indexing of your Bolt website in a number of ways. It does this by:
   - Override the canonical, if you really want to.
   - Set the `<meta name="robots">`-tag.
 
+## Compatibility
+
+This extension supports different Bolt CMS versions depending on the major release:
+
+- **Bolt CMS 6** → Bolt SEO extension **v2.x**
+- **Bolt CMS 5** → Bolt SEO extension **v1.x**
+
+This README documents usage for **Bolt CMS 6**.
+
 Installation
 -----
 ```composer require appolodev/bolt-seo```
