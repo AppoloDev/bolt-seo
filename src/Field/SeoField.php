@@ -11,9 +11,7 @@ use Bolt\Entity\FieldInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Twig\Markup;
 
-/**
- * @ORM\Entity
- */
+#[ORM\Entity]
 class SeoField extends Field implements Excerptable, FieldInterface, RawPersistable
 {
     public const TYPE = 'seo';

@@ -9,5 +9,4 @@ appveyor.yaml
 
 ### Local files
 vendor/
-composer.lock
 var/

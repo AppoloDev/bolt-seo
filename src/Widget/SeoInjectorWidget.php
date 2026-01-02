@@ -8,7 +8,6 @@ use Bolt\Widget\BaseWidget;
 use Bolt\Widget\Injector\RequestZone;
 use Bolt\Widget\Injector\Target;
 use Bolt\Widget\TwigAwareInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class SeoInjectorWidget extends BaseWidget implements TwigAwareInterface
 {
@@ -21,7 +20,6 @@ class SeoInjectorWidget extends BaseWidget implements TwigAwareInterface
 
     public function run(array $params = []): ?string
     {
-        /** @var Request $request */
         $request = $this->getExtension()->getRequest();
 
         if (! \in_array($request->get('_route'), ['bolt_content_edit', 'bolt_content_new', 'bolt_content_duplicate'], true) ||
