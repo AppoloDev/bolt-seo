@@ -19,8 +19,11 @@ use Twig\TwigFunction;
 
 class SeoExtension extends AbstractExtension
 {
-    public function __construct(private readonly ExtensionRegistry $extensionRegistry, private readonly TranslatorInterface $translator, private readonly Config $config)
-    {
+    public function __construct(
+        private readonly ExtensionRegistry $extensionRegistry,
+        private readonly TranslatorInterface $translator,
+        private readonly Config $config
+    ) {
     }
 
     public function getFunctions(): array
