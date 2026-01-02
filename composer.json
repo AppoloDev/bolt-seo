@@ -10,14 +10,14 @@
         }
     ],
     "require": {
-        "php": ">=7.1.3",
-        "twig/twig": "^3.0"
+        "php": ">=8.2",
+        "twig/twig": "^3.21"
     },
     "require-dev": {
-        "bolt/core": "^5.1",
-        "symplify/easy-coding-standard": "^8.1",
-        "phpstan/phpstan": "^0.12.32",
-        "phpstan/phpstan-symfony": "^0.12.6",
+        "bolt/core": "^6.0",
+        "symplify/easy-coding-standard": "^13",
+        "phpstan/phpstan": "2.1.33",
+        "phpstan/phpstan-symfony": "2.0.9",
         "migrify/config-transformer": "^0.4.2"
     },
     "autoload": {
