@@ -12,10 +12,6 @@ class ContentField
 {
     public static function getFieldDefinition(Content $content, array $fields = []): ?ContentType
     {
-        if (! isset($fields)) {
-            return null;
-        }
-
         $definitionFields = $content->getDefinition()->get('fields');
         foreach ($fields as $fieldName) {
             if ($definitionFields->has($fieldName)) {
@@ -28,10 +24,6 @@ class ContentField
 
     public static function getField(Content $content, array $fields = []): ?Field
     {
-        if (! isset($fields)) {
-            return null;
-        }
-
         foreach ($fields as $fieldName) {
             if ($content->hasField($fieldName)) {
                 return $content->getField($fieldName);
