@@ -34,7 +34,7 @@ class Seo
 
     public function __construct(
         private readonly Environment $twig,
-        private Collection $config,
+        private readonly Collection $config,
         private readonly Config $boltConfig,
         private readonly Request $request,
         private readonly TranslatorInterface $translator
