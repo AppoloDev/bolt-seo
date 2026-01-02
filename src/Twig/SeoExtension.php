@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Appolo\BoltSeo\Twig;
 
+use Appolo\BoltSeo\Extension;
 use Appolo\BoltSeo\Seo\ContentField;
 use Bolt\Configuration\Config;
 use Bolt\Configuration\Content\ContentType;
@@ -111,6 +112,7 @@ class SeoExtension extends AbstractExtension
 
     private function getExtensionConfig(): Collection
     {
+        /** @var Extension $extension */
         $extension = $this->getExtension();
 
         return $extension->getConfig();
