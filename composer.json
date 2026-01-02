@@ -18,8 +18,7 @@
         "phpstan/phpstan": "2.1.33",
         "rector/rector": "2.2.14",
         "symplify/easy-coding-standard": "^13",
-        "phpstan/phpstan-symfony": "2.0.9",
-        "migrify/config-transformer": "^0.4.2"
+        "phpstan/phpstan-symfony": "2.0.9"
     },
     "autoload": {
         "psr-4": {
@@ -30,5 +29,12 @@
     "prefer-stable": true,
     "extra": {
         "entrypoint": "Appolo\\BoltSeo\\Extension"
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/runtime": true,
+            "symfony/flex": true,
+            "drupol/composer-packages": true
+        }
     }
 }

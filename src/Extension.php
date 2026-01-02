@@ -7,7 +7,6 @@ namespace Appolo\BoltSeo;
 use Appolo\BoltSeo\Seo\Seo;
 use Appolo\BoltSeo\Widget\SeoInjectorWidget;
 use Bolt\Extension\BaseExtension;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Extension extends BaseExtension
@@ -43,7 +42,6 @@ class Extension extends BaseExtension
      */
     public function install(): void
     {
-        /** @var Container $container */
         $container = $this->getContainer();
         $projectDir = $container->getParameter('kernel.project_dir');
         $public = $container->getParameter('bolt.public_folder');

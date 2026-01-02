@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Appolo\BoltSeo\Twig;
 
-use Appolo\BoltSeo\Extension;
 use Appolo\BoltSeo\Seo\ContentField;
 use Bolt\Configuration\Config;
 use Bolt\Configuration\Content\ContentType;
@@ -14,18 +13,15 @@ use Bolt\Extension\ExtensionInterface;
 use Bolt\Extension\ExtensionRegistry;
 use Bolt\Utils\Html;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Tightenco\Collect\Support\Collection;
+use Illuminate\Support\Collection;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class SeoExtension extends AbstractExtension
 {
-    /** @var ExtensionRegistry */
-    private $extensionRegistry;
-    /** @var TranslatorInterface */
-    private $translator;
-    /** @var Config */
-    private $config;
+    private ExtensionRegistry $extensionRegistry;
+    private TranslatorInterface $translator;
+    private Config $config;
 
     public function __construct(
         ExtensionRegistry $extensionRegistry,
@@ -81,7 +77,7 @@ class SeoExtension extends AbstractExtension
                 return $seoField ?: $this->translator->trans('Default title');
             case 'description':
                 $description = '
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Sed cursus purus lacus, eget commodo quam finibus luctus. Aliquam odio nibh, commodo sit amet dui in.
                 ';
                 $seoField = $this->seoField($content, 'description');
@@ -122,7 +118,6 @@ class SeoExtension extends AbstractExtension
 
     private function getExtensionConfig(): Collection
     {
-        /** @var Extension $extension */
         $extension = $this->getExtension();
 
         return $extension->getConfig();

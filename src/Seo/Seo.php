@@ -1,8 +1,8 @@
 <?php
 
-declare(strict_types=1);
+    declare(strict_types=1);
 
-namespace Appolo\BoltSeo\Seo;
+    namespace Appolo\BoltSeo\Seo;
 
 use Bolt\Configuration\Config;
 use Bolt\Configuration\Content\ContentType;
@@ -11,7 +11,7 @@ use Bolt\Entity\Field;
 use Bolt\Utils\Html;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Tightenco\Collect\Support\Collection;
+use Illuminate\Support\Collection;
 use Twig\Environment;
 use Twig\Markup;
 
@@ -24,30 +24,18 @@ use Twig\Markup;
  *  3. Content fields / ContentTypeSlug for listing && taxonomies
  *  4. Default title && payoff
  */
-class Seo
-{
-    /** @var string */
-    protected $templateMetas = '@seo/_metatags.html.twig';
-    /** @var Environment */
-    private $twig;
-    /** @var Collection */
-    private $config;
-    /** @var Config */
-    private $boltConfig;
-    /** @var TranslatorInterface */
-    private $translator;
-    /** @var Request $request */
-    private $request;
-    /** @var Content|null */
-    protected $record;
-    /** @var ContentType|null */
-    protected $contentType;
-    /** @var string */
-    protected $routeType;
-    /** @var array|null $defaultsOverride */
-    protected $defaultsOverride;
-    /** @var array */
-    protected $seoData;
+class Seo {
+    protected string $templateMetas = '@seo/_metatags.html.twig';
+    private Environment $twig;
+    private Collection $config;
+    private Config $boltConfig;
+    private TranslatorInterface $translator;
+    private Request $request;
+    protected ?Content $record = null;
+    protected ?ContentType $contentType = null;
+    protected ?string $routeType;
+    protected ?array $defaultsOverride = null;
+    protected array $seoData = [];
 
     public function __construct(
         Environment $twig,
@@ -65,7 +53,9 @@ class Seo
         if($templateConfig && isset($templateConfig['meta']) && $templateConfig['meta'] !== '') {
             $this->templateMetas = $templateConfig['meta'];
         }
-        $this->routeType = $this->request->get('_route');
+
+
+        $this->routeType = $this->request->attributes->get('_route');
         $this->translator = $translator;
     }
 
