@@ -6,7 +6,7 @@ doctrine:
         mappings:
             BoltSeo:
                 is_bundle: false
-                type: annotation
+                type: attribute
                 dir: '%kernel.project_dir%/vendor/appolodev/bolt-seo/src'
                 prefix: 'Appolo\BoltSeo'
                 alias: BoltSeo

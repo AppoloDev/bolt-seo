@@ -1,4 +1,4 @@
-# The separator in the title: "Lorum ipsum | My website name"
+# The separator in the title: "Lorem Ipsum | My website name"
 title_separator: "|"
 
 # The postfix to append to titles. Leave this blank to use the 'sitename' from config.yml.

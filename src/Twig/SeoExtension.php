@@ -13,37 +13,27 @@ use Bolt\Entity\Field;
 use Bolt\Extension\ExtensionInterface;
 use Bolt\Extension\ExtensionRegistry;
 use Bolt\Utils\Html;
+use Illuminate\Support\Collection;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Tightenco\Collect\Support\Collection;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class SeoExtension extends AbstractExtension
 {
-    /** @var ExtensionRegistry */
-    private $extensionRegistry;
-    /** @var TranslatorInterface */
-    private $translator;
-    /** @var Config */
-    private $config;
-
     public function __construct(
-        ExtensionRegistry $extensionRegistry,
-        TranslatorInterface $translator,
-        Config $config
+        private readonly ExtensionRegistry $extensionRegistry,
+        private readonly TranslatorInterface $translator,
+        private readonly Config $config
     ) {
-        $this->extensionRegistry = $extensionRegistry;
-        $this->translator = $translator;
-        $this->config = $config;
     }
 
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('seoGetConfig', [$this, 'seoGetConfig']),
-            new TwigFunction('seoFieldValue', [$this, 'seoFieldValue']),
-            new TwigFunction('seoFieldDefinition', [$this, 'seoFieldDefinition']),
-            new TwigFunction('seoField', [$this, 'seoField']),
+            new TwigFunction('seoGetConfig', $this->seoGetConfig(...)),
+            new TwigFunction('seoFieldValue', $this->seoFieldValue(...)),
+            new TwigFunction('seoFieldDefinition', $this->seoFieldDefinition(...)),
+            new TwigFunction('seoField', $this->seoField(...)),
         ];
     }
 
@@ -81,7 +71,7 @@ class SeoExtension extends AbstractExtension
                 return $seoField ?: $this->translator->trans('Default title');
             case 'description':
                 $description = '
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Sed cursus purus lacus, eget commodo quam finibus luctus. Aliquam odio nibh, commodo sit amet dui in.
                 ';
                 $seoField = $this->seoField($content, 'description');
