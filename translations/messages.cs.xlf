@@ -37,6 +37,12 @@
         <target>Výchozí titulek</target>
       </segment>
     </unit>
+    <unit id="lONBiUz" name="default-title">
+      <segment>
+        <source>default-title</source>
+        <target>vychozi-titulek</target>
+      </segment>
+    </unit>
     <unit id="ORnQHm." name="Shortlink">
       <segment>
         <source>Shortlink</source>

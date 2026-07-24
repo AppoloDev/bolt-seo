@@ -37,6 +37,12 @@
         <target>Default title</target>
       </segment>
     </unit>
+    <unit id="lONBiUz" name="default-title">
+      <segment>
+        <source>default-title</source>
+        <target>default-title</target>
+      </segment>
+    </unit>
     <unit id="ORnQHm." name="Shortlink">
       <segment>
         <source>Shortlink</source>
