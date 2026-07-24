@@ -16,7 +16,7 @@
     <unit id="HdE0ldo" name="Limit the length to %number% characters">
       <segment>
         <source>Limit the length to %number% characters</source>
-        <target>Longueur recommandée à %number% caractères</target>
+        <target>Limitez la longueur à %number% caractères</target>
       </segment>
     </unit>
     <unit id="JPCo9LS" name="Meta description">
@@ -106,13 +106,13 @@
     <unit id="tGAPy_h" name="Use this to set the &lt;tt&gt;&amp;lt;meta name=&quot;robots&quot;&amp;gt;&lt;/tt&gt;">
       <segment>
         <source>Use this to set the &lt;tt&gt;&amp;lt;meta name="robots"&amp;gt;&lt;/tt&gt;</source>
-        <target><![CDATA[Utilisez-le pour remplacer la balise <tt>&lt;meta name="robots"&gt;</tt>]]></target>
+        <target><![CDATA[Utilisez-le pour définir la balise <tt>&lt;meta name="robots"&gt;</tt>]]></target>
       </segment>
     </unit>
     <unit id="AXJdT4M" name="Use this to set the &lt;tt&gt;&amp;lt;meta property=&quot;og:type&quot;&amp;gt;&lt;/tt&gt;">
       <segment>
         <source>Use this to set the &lt;tt&gt;&amp;lt;meta property="og:type"&amp;gt;&lt;/tt&gt;</source>
-        <target><![CDATA[Utilisez ceci pour remplacer la balise <tt>&lt;meta property="og:type"&gt;</tt>]]></target>
+        <target><![CDATA[Utilisez-le pour définir la balise <tt>&lt;meta property="og:type"&gt;</tt>]]></target>
       </segment>
     </unit>
     <unit id="z9KeyMt" name="Meta keywords">
