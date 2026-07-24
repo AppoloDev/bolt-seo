@@ -61,10 +61,10 @@
         <target>Canonical bağlantı</target>
       </segment>
     </unit>
-    <unit id="pCpmxa8" name="Use this to create an alias or shortlink to this record. Be sure to make it an absolute link.">
+    <unit id="V.BIy_i" name="Use this to create an alias or shortlink to this record. Be sure to make it an absolute link">
       <segment>
-        <source>Use this to create an alias or shortlink to this record. Be sure to make it an absolute link.</source>
-        <target>Bu kayıt için bir kısa bağlantı veya takma ad oluşturmak için burayı kullanın. Mutlak bir bağlantı yaptığınızdan emin olun.</target>
+        <source>Use this to create an alias or shortlink to this record. Be sure to make it an absolute link</source>
+        <target>Bu kayıt için bir kısa bağlantı veya takma ad oluşturmak için burayı kullanın. Mutlak bir bağlantı yaptığınızdan emin olun</target>
       </segment>
     </unit>
     <unit id="FwLQ5cl" name="Use with caution, and only if you know what you're doing">
