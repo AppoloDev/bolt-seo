@@ -103,10 +103,10 @@
         <target><![CDATA[Use this to set the <tt>&lt;meta name="robots"&gt;</tt>]]></target>
       </segment>
     </unit>
-    <unit id="HxdlzS6" name="Use this to set the &lt;tt&gt;&amp;lt;meta name=&quot;og:type&quot;&amp;gt;&lt;/tt&gt;">
+    <unit id="AXJdT4M" name="Use this to set the &lt;tt&gt;&amp;lt;meta property=&quot;og:type&quot;&amp;gt;&lt;/tt&gt;">
       <segment>
-        <source>Use this to set the &lt;tt&gt;&amp;lt;meta name="og:type"&amp;gt;&lt;/tt&gt;</source>
-        <target><![CDATA[Use this to set the <tt>&lt;meta name="og:type"&gt;</tt>]]></target>
+        <source>Use this to set the &lt;tt&gt;&amp;lt;meta property="og:type"&amp;gt;&lt;/tt&gt;</source>
+        <target><![CDATA[Use this to set the <tt>&lt;meta property="og:type"&gt;</tt>]]></target>
       </segment>
     </unit>
     <unit id="z9KeyMt" name="Meta keywords">
