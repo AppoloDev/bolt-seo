@@ -233,7 +233,7 @@ class Seo
             return $this->cleanUp($this->seoData['og']);
         }
 
-        if (isset($this->config['default']['ogtype'])) {
+        if (! empty($this->config['default']['ogtype'])) {
             return $this->cleanUp($this->config['default']['ogtype']);
         }
 
@@ -252,7 +252,7 @@ class Seo
             return $this->cleanUp($this->seoData['robots']);
         }
 
-        if (isset($this->config['default']['robots'])) {
+        if (! empty($this->config['default']['robots'])) {
             return $this->cleanUp($this->config['default']['robots']);
         }
         return 'index, follow';
@@ -273,7 +273,7 @@ class Seo
             }
         }
 
-        if (isset($this->config['default']['image'])) {
+        if (! empty($this->config['default']['image'])) {
             return $this->cleanUp($this->config['default']['image']);
         }
 
@@ -296,7 +296,7 @@ class Seo
             return $this->cleanUp($this->seoData['canonical']);
         }
 
-        if (isset($this->config['default']['canonical'])) {
+        if (! empty($this->config['default']['canonical'])) {
             return $this->cleanUp($this->config['default']['canonical']);
         }
 

@@ -441,6 +441,52 @@ class SeoMetaTagsTest extends SeoTestCase
         self::assertSame('keyword one, keyword two', $seo->keywords());
     }
 
+    // --- empty-string config defaults ---------------------------------------
+
+    /**
+     * These getters guarded their configured default with isset(), so an empty
+     * string counted as "configured" and short-circuited the rest of the chain.
+     * The commented override examples shipped in config/config.yaml literally use
+     * `canonical: ''` and `image: ''`, so following the documentation produced an
+     * empty <link rel="canonical">, og:url and twitter:url.
+     */
+    public function testEmptyDefaultCanonicalFallsBackToRequestUri(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => '', 'description' => '', 'keywords' => '', 'canonical' => ''],
+        ]);
+
+        self::assertSame('http://localhost/', $seo->canonical());
+    }
+
+    public function testEmptyDefaultRobotsFallsBackToIndexFollow(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => '', 'description' => '', 'keywords' => '', 'robots' => ''],
+        ]);
+
+        self::assertSame('index, follow', $seo->robots());
+    }
+
+    public function testEmptyDefaultOgtypeFallsBackToWebsite(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => '', 'description' => '', 'keywords' => '', 'ogtype' => ''],
+        ]);
+
+        self::assertSame('website', $seo->ogtype());
+    }
+
+    public function testEmptyDefaultImageFallsBackToRecordExtras(): void
+    {
+        $record = $this->record([], ['image' => ['url' => 'https://example.test/extra.jpg']]);
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => '', 'description' => '', 'keywords' => '', 'image' => ''],
+        ], record: $record);
+
+        self::assertSame('https://example.test/extra.jpg', $seo->image());
+    }
+
     // --- metatags ----------------------------------------------------------
 
     public function testMetatagsRendersTemplateAsMarkup(): void
