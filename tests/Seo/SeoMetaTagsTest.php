@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Appolo\BoltSeo\Tests\Seo;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Twig\Environment;
 use Twig\Markup;
 
@@ -123,6 +124,53 @@ class SeoMetaTagsTest extends SeoTestCase
         $seo = $this->makeSeo('record', ['default' => ['title' => '', 'description' => '']]);
 
         self::assertSame('', $seo->keywords());
+    }
+
+    /**
+     * `keywords_length: 0` is the shipped default and means "keywords are disabled
+     * in the editor" — it must not be handed to Html::trimText(), which treats 0 as
+     * a real limit and chops the last character off before appending an ellipsis.
+     *
+     * @param array<string, mixed> $config
+     */
+    #[DataProvider('keywordsSourceProvider')]
+    public function testKeywordsAreNotTruncatedWhenLengthIsZero(array $config, ?array $seoData): void
+    {
+        $record = $seoData === null ? null : $this->recordWithSeoData($seoData);
+        $seo = $this->makeSeo('record', array_merge($config, ['keywords_length' => 0]), record: $record);
+
+        self::assertSame('keyword one, keyword two', $seo->keywords());
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>, ?array<string, mixed>}>
+     */
+    public static function keywordsSourceProvider(): array
+    {
+        return [
+            'override' => [
+                ['override_default' => ['record' => ['keywords' => 'keyword one, keyword two']]],
+                null,
+            ],
+            'seo field' => [
+                [],
+                ['keywords' => 'keyword one, keyword two'],
+            ],
+            'configured default' => [
+                ['default' => ['title' => '', 'description' => '', 'keywords' => 'keyword one, keyword two']],
+                null,
+            ],
+        ];
+    }
+
+    public function testKeywordsAreStillTruncatedWhenLengthIsSet(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'keywords_length' => 12,
+            'override_default' => ['record' => ['keywords' => 'keyword one, keyword two']],
+        ]);
+
+        self::assertSame('keyword one…', $seo->keywords());
     }
 
     // --- ogtype ------------------------------------------------------------

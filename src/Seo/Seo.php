@@ -196,13 +196,11 @@ class Seo
         $this->initialize();
 
         if (! empty($this->defaultsOverride['keywords'])) {
-            $keywords = $this->defaultsOverride['keywords'];
-            return Html::trimText($keywords, $this->config['keywords_length']);
+            return $this->trimKeywords($this->defaultsOverride['keywords']);
         }
 
         if ($this->seoData && isset($this->seoData['keywords']) && $this->seoData['keywords'] !== '') {
-            $keywords = $this->cleanUp($this->seoData['keywords']);
-            return Html::trimText($keywords, $this->config['keywords_length']);
+            return $this->trimKeywords($this->cleanUp($this->seoData['keywords']));
         }
 
         if (isset($this->config['default']['keywords'])) {
@@ -211,7 +209,7 @@ class Seo
             $keywords = '';
         }
 
-        return Html::trimText($keywords, $this->config['keywords_length']);
+        return $this->trimKeywords($keywords);
     }
 
     public function ogtype()
@@ -312,6 +310,23 @@ class Seo
 
         $html = $this->twig->render($this->templateMetas, $vars);
         return new Markup($html, 'UTF-8');
+    }
+
+    /**
+     * `keywords_length: 0` is the shipped default and means "the keywords field is
+     * disabled in the editor", not "truncate to nothing". Html::trimText() treats a
+     * length of 0 as a real limit and would chop the last character off and append
+     * an ellipsis, so only truncate when a positive limit is configured.
+     */
+    private function trimKeywords(string $keywords): string
+    {
+        $length = $this->config['keywords_length'];
+
+        if (! is_int($length) || $length <= 0) {
+            return $keywords;
+        }
+
+        return Html::trimText($keywords, $length);
     }
 
     private function postfixTitle(): string
