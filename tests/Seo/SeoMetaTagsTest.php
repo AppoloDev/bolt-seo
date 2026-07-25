@@ -380,6 +380,31 @@ class SeoMetaTagsTest extends SeoTestCase
         ];
     }
 
+    // --- malformed encoding -------------------------------------------------
+
+    /**
+     * cleanUp() collapses whitespace with a `/u` regex, which returns null on
+     * malformed UTF-8 rather than throwing. Returning that from a `string` method
+     * is a TypeError, so a single badly encoded byte anywhere in the content
+     * (a legacy import, a mangled paste) would take the page down.
+     */
+    public function testMalformedUtf8InRecordTitleDoesNotFatal(): void
+    {
+        $record = $this->record(['title' => "Caf\xC3\x28e"]);
+        $seo = $this->makeSeo('record', record: $record, siteName: 'Acme');
+
+        self::assertIsString($seo->title());
+    }
+
+    public function testMalformedUtf8InConfiguredDefaultDoesNotFatal(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => "Caf\xC3\x28e", 'description' => '', 'keywords' => ''],
+        ]);
+
+        self::assertIsString($seo->title());
+    }
+
     // --- metatags ----------------------------------------------------------
 
     public function testMetatagsRendersTemplateAsMarkup(): void

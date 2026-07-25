@@ -390,9 +390,12 @@ class Seo
 
         $string = strip_tags($string);
         $string = str_replace(["\r", "\n"], '', $string);
-        $string = preg_replace('/\s+/u', ' ', $string);
 
-        return $string;
+        // preg_replace() returns null on malformed UTF-8 instead of throwing, and
+        // returning that would be a TypeError. A single bad byte from a legacy
+        // import or a mangled paste must not take the page down, so fall back to
+        // the uncollapsed string.
+        return preg_replace('/\s+/u', ' ', $string) ?? $string;
     }
 
     private function getField(Content $content, string $field): ?Field
