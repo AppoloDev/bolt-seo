@@ -70,7 +70,7 @@
     <unit id="FwLQ5cl" name="Use with caution, and only if you know what you're doing">
       <segment>
         <source>Use with caution, and only if you know what you're doing</source>
-        <target>Dikkatli kullanın, ne yaptığınızı biliyorsanız kullanın</target>
+        <target>Dikkatli kullanın ve yalnızca ne yaptığınızı biliyorsanız değiştirin</target>
       </segment>
     </unit>
     <unit id="n3BhrCh" name="Meta Robots Tag">
