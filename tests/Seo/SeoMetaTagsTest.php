@@ -340,6 +340,46 @@ class SeoMetaTagsTest extends SeoTestCase
         self::assertSame('', $seo->image());
     }
 
+    // --- malformed `seo` field payloads ------------------------------------
+
+    /**
+     * The `seo` field holds a raw JSON string maintained by the editor's JavaScript,
+     * but nothing guarantees it: fixtures, imports and API writes can put anything
+     * in there. A value that does not decode to an array must degrade to "no SEO
+     * data" and let the normal fallback chain run, not blow up the whole page.
+     */
+    #[DataProvider('malformedSeoPayloadProvider')]
+    public function testMalformedSeoFieldFallsBackToRecordFields(string $payload): void
+    {
+        $record = $this->record([
+            'seo' => $payload,
+            'title' => 'Record Title',
+            'description' => 'Record description',
+        ]);
+        $seo = $this->makeSeo('record', record: $record);
+
+        self::assertSame('Record Title', $seo->title());
+        self::assertSame('Record description', $seo->description());
+        self::assertSame('', $seo->keywords());
+        self::assertSame('website', $seo->ogtype());
+        self::assertSame('index, follow', $seo->robots());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function malformedSeoPayloadProvider(): array
+    {
+        return [
+            'not json at all' => ['this is not json'],
+            'truncated json' => ['{"title": "Half a doc'],
+            'json scalar int' => ['5'],
+            'json scalar string' => ['"just a string"'],
+            'json null' => ['null'],
+            'json list' => ['["title", "description"]'],
+        ];
+    }
+
     // --- metatags ----------------------------------------------------------
 
     public function testMetatagsRendersTemplateAsMarkup(): void

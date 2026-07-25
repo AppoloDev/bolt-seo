@@ -96,7 +96,16 @@ class Seo
 
         $this->record = $this->twig->getGlobals()['record'];
         $field = $this->getSeoField($this->record);
-        $this->seoData = $field && $field->__toString() ? json_decode($field->__toString(), true) : [];
+
+        // The `seo` field holds a raw JSON string maintained by the editor's
+        // JavaScript, but nothing guarantees that: fixtures, imports and API writes
+        // can store anything. Anything that does not decode to an array degrades to
+        // "no SEO data" so the normal fallback chain runs instead of fataling.
+        $decoded = $field && $field->__toString()
+            ? json_decode($field->__toString(), true)
+            : [];
+
+        $this->seoData = is_array($decoded) ? $decoded : [];
     }
 
     public function title(): string
