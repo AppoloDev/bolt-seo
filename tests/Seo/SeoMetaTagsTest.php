@@ -405,6 +405,42 @@ class SeoMetaTagsTest extends SeoTestCase
         self::assertIsString($seo->title());
     }
 
+    // --- incomplete config --------------------------------------------------
+
+    /**
+     * Bolt copies an extension's default config to config/extensions/ exactly once
+     * and never merges it again (ConfigTrait::initializeConfig), so a site's config
+     * file can legitimately lack any key — an older copy, or one the user commented
+     * out. A missing length key used to reach Html::trimText() as null, which is a
+     * TypeError under strict_types. Fall back to the documented defaults instead.
+     */
+    public function testMissingDescriptionLengthFallsBackToDefault(): void
+    {
+        $config = $this->defaultConfig();
+        unset($config['description_length']);
+
+        $seo = $this->makeSeo('record', $config, record: $this->record([
+            'description' => str_repeat('word ', 60),
+        ]), mergeDefaults: false);
+
+        $description = $seo->description();
+
+        self::assertLessThanOrEqual(158, mb_strlen($description));
+        self::assertStringEndsWith('…', $description);
+    }
+
+    public function testMissingKeywordsLengthDoesNotTruncate(): void
+    {
+        $config = $this->defaultConfig();
+        unset($config['keywords_length']);
+
+        $seo = $this->makeSeo('record', array_merge($config, [
+            'override_default' => ['record' => ['keywords' => 'keyword one, keyword two']],
+        ]), mergeDefaults: false);
+
+        self::assertSame('keyword one, keyword two', $seo->keywords());
+    }
+
     // --- metatags ----------------------------------------------------------
 
     public function testMetatagsRendersTemplateAsMarkup(): void

@@ -175,19 +175,19 @@ class Seo
 
         if (! empty($this->defaultsOverride['description'])) {
             $description = $this->defaultsOverride['description'];
-            return Html::trimText($description, $this->config['description_length']);
+            return $this->trimDescription($description);
         }
 
         if ($this->seoData && isset($this->seoData['description']) && $this->seoData['description'] !== '') {
             $description = $this->cleanUp($this->seoData['description']);
-            return Html::trimText($description, $this->config['description_length']);
+            return $this->trimDescription($description);
         }
 
         if ($this->record) {
             $field = $this->getField($this->record, 'description');
             if ($field && $field->__toString() !== '') {
                 $description = $this->cleanUp($field->__toString());
-                return Html::trimText($description, $this->config['description_length']);
+                return $this->trimDescription($description);
             }
         }
 
@@ -197,7 +197,7 @@ class Seo
             $description = $this->cleanUp($this->boltConfig->get('general/payoff'));
         }
 
-        return Html::trimText($description, $this->config['description_length']);
+        return $this->trimDescription($description);
     }
 
     public function keywords(): string
@@ -321,6 +321,11 @@ class Seo
         return new Markup($html, 'UTF-8');
     }
 
+    private function trimDescription(string $description): string
+    {
+        return Html::trimText($description, $this->configLength('description_length', 158));
+    }
+
     /**
      * `keywords_length: 0` is the shipped default and means "the keywords field is
      * disabled in the editor", not "truncate to nothing". Html::trimText() treats a
@@ -329,13 +334,26 @@ class Seo
      */
     private function trimKeywords(string $keywords): string
     {
-        $length = $this->config['keywords_length'];
+        $length = $this->configLength('keywords_length', 0);
 
-        if (! is_int($length) || $length <= 0) {
+        if ($length <= 0) {
             return $keywords;
         }
 
         return Html::trimText($keywords, $length);
+    }
+
+    /**
+     * Read a numeric config key defensively. Bolt copies an extension's default
+     * config to config/extensions/ exactly once and never merges it again, so a
+     * site's config file can be missing any key — an older copy, or one the user
+     * commented out. Reading such a key as an int argument would be a TypeError.
+     */
+    private function configLength(string $key, int $default): int
+    {
+        $value = $this->config->get($key, $default);
+
+        return is_numeric($value) ? (int) $value : $default;
     }
 
     private function postfixTitle(): string

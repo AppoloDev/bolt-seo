@@ -44,6 +44,8 @@ abstract class SeoTestCase extends TestCase
 
     /**
      * @param array<string, mixed> $config
+     * @param bool $mergeDefaults When false, $config is used verbatim so a test can
+     *                            assert on a config that is *missing* a key entirely.
      */
     protected function makeSeo(
         string $route,
@@ -57,8 +59,11 @@ abstract class SeoTestCase extends TestCase
         ?TranslatorInterface $translator = null,
         ?Request $request = null,
         ?Environment $twig = null,
+        bool $mergeDefaults = true,
     ): Seo {
-        $config = array_merge($this->defaultConfig(), $config);
+        if ($mergeDefaults) {
+            $config = array_merge($this->defaultConfig(), $config);
+        }
 
         if ($request === null) {
             $request = new Request(
