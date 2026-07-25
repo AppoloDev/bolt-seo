@@ -19,7 +19,7 @@ class SeoField extends Field implements Excerptable, FieldInterface, RawPersista
     /**
      * Override getTwigValue to render field as html
      */
-    public function getTwigValue()
+    public function getTwigValue(): Markup
     {
         $value = $this->getParsedValue();
 

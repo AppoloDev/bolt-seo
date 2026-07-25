@@ -29,9 +29,16 @@ class Seo
     protected ?Content $record = null;
     protected ?ContentType $contentType = null;
     protected ?string $routeType;
+
+    /** @var array<string, mixed>|null */
     protected ?array $defaultsOverride = null;
+
+    /** @var array<string, mixed> */
     protected array $seoData = [];
 
+    /**
+     * @param Collection<string, mixed> $config
+     */
     public function __construct(
         private readonly Environment $twig,
         private readonly Collection $config,
@@ -221,12 +228,12 @@ class Seo
         return $this->trimKeywords($keywords);
     }
 
-    public function ogtype()
+    public function ogtype(): string
     {
         $this->initialize();
 
         if (! empty($this->defaultsOverride['ogtype'])) {
-            return $this->defaultsOverride['ogtype'];
+            return (string) $this->defaultsOverride['ogtype'];
         }
 
         if ($this->seoData && isset($this->seoData['og']) && $this->seoData['og'] !== '') {
@@ -240,12 +247,12 @@ class Seo
         return 'website';
     }
 
-    public function robots()
+    public function robots(): string
     {
         $this->initialize();
 
         if (! empty($this->defaultsOverride['robots'])) {
-            return $this->defaultsOverride['robots'];
+            return (string) $this->defaultsOverride['robots'];
         }
 
         if ($this->seoData && isset($this->seoData['robots']) && $this->seoData['robots'] !== '') {

@@ -18,6 +18,9 @@ class SeoInjectorWidget extends BaseWidget implements TwigAwareInterface
     protected $template = '@seo/injector.html.twig';
     protected $priority = 200;
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public function run(array $params = []): ?string
     {
         $request = $this->getExtension()->getRequest();

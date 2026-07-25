@@ -37,6 +37,9 @@ class SeoExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function seoGetConfig(): array
     {
         return $this->getExtensionConfig()->toArray();
@@ -121,6 +124,9 @@ class SeoExtension extends AbstractExtension
         return $this->extensionRegistry->getExtension('Appolo\\BoltSeo');
     }
 
+    /**
+     * @return Collection<string, mixed>
+     */
     private function getExtensionConfig(): Collection
     {
         /** @var Extension $extension */
