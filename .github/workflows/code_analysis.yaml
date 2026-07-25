@@ -51,6 +51,9 @@ jobs:
           - name: Check composer.json and composer.lock
             run: composer validate --strict --ansi
 
+          - name: Check XLIFF translation files
+            run: php bin/lint-xliff translations --ansi
+
           - name: PHPUnit
             run: vendor/bin/phpunit --colors=always
 
