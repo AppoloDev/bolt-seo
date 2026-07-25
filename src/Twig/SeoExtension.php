@@ -14,6 +14,7 @@ use Bolt\Extension\ExtensionInterface;
 use Bolt\Extension\ExtensionRegistry;
 use Bolt\Utils\Html;
 use Illuminate\Support\Collection;
+use RuntimeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -123,7 +124,7 @@ class SeoExtension extends AbstractExtension
     {
         $extension = $this->extensionRegistry->getExtension('Appolo\\BoltSeo');
         if ($extension === null) {
-            throw new \RuntimeException('The "Appolo\\BoltSeo" extension is not registered.');
+            throw new RuntimeException('The "Appolo\\BoltSeo" extension is not registered.');
         }
 
         return $extension;

@@ -7,6 +7,7 @@ namespace Appolo\BoltSeo;
 use Appolo\BoltSeo\Seo\Seo;
 use Appolo\BoltSeo\Widget\SeoInjectorWidget;
 use Bolt\Extension\BaseExtension;
+use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -51,7 +52,7 @@ class Extension extends BaseExtension
         $public = $container->getParameter('bolt.public_folder');
 
         if (! \is_string($projectDir) || ! \is_string($public)) {
-            throw new \RuntimeException('The "kernel.project_dir" and "bolt.public_folder" container parameters must be strings.');
+            throw new RuntimeException('The "kernel.project_dir" and "bolt.public_folder" container parameters must be strings.');
         }
 
         $source = \dirname(__DIR__) . '/assets/';
