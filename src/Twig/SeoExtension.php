@@ -121,7 +121,12 @@ class SeoExtension extends AbstractExtension
 
     private function getExtension(): ExtensionInterface
     {
-        return $this->extensionRegistry->getExtension('Appolo\\BoltSeo');
+        $extension = $this->extensionRegistry->getExtension('Appolo\\BoltSeo');
+        if ($extension === null) {
+            throw new \RuntimeException('The "Appolo\\BoltSeo" extension is not registered.');
+        }
+
+        return $extension;
     }
 
     /**

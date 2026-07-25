@@ -15,7 +15,12 @@ class ContentField
      */
     public static function getFieldDefinition(Content $content, array $fields = []): ?ContentType
     {
-        $definitionFields = $content->getDefinition()->get('fields');
+        $definition = $content->getDefinition();
+        if ($definition === null) {
+            return null;
+        }
+
+        $definitionFields = $definition->get('fields');
         foreach ($fields as $fieldName) {
             if ($definitionFields->has($fieldName)) {
                 return $definitionFields->get($fieldName);
