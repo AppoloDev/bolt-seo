@@ -323,7 +323,9 @@ class Seo
 
     private function trimDescription(string $description): string
     {
-        return Html::trimText($description, $this->configLength('description_length', 158));
+        $length = $this->configLength('description_length');
+
+        return $length !== null ? Html::trimText($description, $length) : $description;
     }
 
     /**
@@ -334,9 +336,9 @@ class Seo
      */
     private function trimKeywords(string $keywords): string
     {
-        $length = $this->configLength('keywords_length', 0);
+        $length = $this->configLength('keywords_length');
 
-        if ($length <= 0) {
+        if ($length === null || $length <= 0) {
             return $keywords;
         }
 
@@ -347,13 +349,15 @@ class Seo
      * Read a numeric config key defensively. Bolt copies an extension's default
      * config to config/extensions/ exactly once and never merges it again, so a
      * site's config file can be missing any key — an older copy, or one the user
-     * commented out. Reading such a key as an int argument would be a TypeError.
+     * commented out. Reading such a key as an int argument would be a TypeError, so
+     * a missing or non-numeric value is treated as unset rather than duplicating
+     * config.yaml's defaults here.
      */
-    private function configLength(string $key, int $default): int
+    private function configLength(string $key): ?int
     {
-        $value = $this->config->get($key, $default);
+        $value = $this->config->get($key);
 
-        return is_numeric($value) ? (int) $value : $default;
+        return is_numeric($value) ? (int) $value : null;
     }
 
     private function postfixTitle(): string

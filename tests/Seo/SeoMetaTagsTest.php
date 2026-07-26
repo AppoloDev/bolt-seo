@@ -412,21 +412,20 @@ class SeoMetaTagsTest extends SeoTestCase
      * and never merges it again (ConfigTrait::initializeConfig), so a site's config
      * file can legitimately lack any key — an older copy, or one the user commented
      * out. A missing length key used to reach Html::trimText() as null, which is a
-     * TypeError under strict_types. Fall back to the documented defaults instead.
+     * TypeError under strict_types. Rather than duplicating config.yaml's default
+     * here, a missing key simply means "do not trim".
      */
-    public function testMissingDescriptionLengthFallsBackToDefault(): void
+    public function testMissingDescriptionLengthDoesNotTruncate(): void
     {
         $config = $this->defaultConfig();
         unset($config['description_length']);
 
+        $description = str_repeat('word ', 60);
         $seo = $this->makeSeo('record', $config, record: $this->record([
-            'description' => str_repeat('word ', 60),
+            'description' => $description,
         ]), mergeDefaults: false);
 
-        $description = $seo->description();
-
-        self::assertLessThanOrEqual(158, mb_strlen($description));
-        self::assertStringEndsWith('…', $description);
+        self::assertSame($description, $seo->description());
     }
 
     public function testMissingKeywordsLengthDoesNotTruncate(): void
