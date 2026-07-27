@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Translation\Command\XliffLintCommand;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$command = new XliffLintCommand();
+
+$application = new Application('lint-xliff');
+$application->add($command);
+$application->setDefaultCommand($command->getName(), true);
+$application->run();

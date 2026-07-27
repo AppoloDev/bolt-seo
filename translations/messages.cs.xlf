@@ -37,6 +37,12 @@
         <target>Výchozí titulek</target>
       </segment>
     </unit>
+    <unit id="lONBiUz" name="default-title">
+      <segment>
+        <source>default-title</source>
+        <target>vychozi-titulek</target>
+      </segment>
+    </unit>
     <unit id="ORnQHm." name="Shortlink">
       <segment>
         <source>Shortlink</source>
@@ -55,10 +61,10 @@
         <target>Kanonický odkaz</target>
       </segment>
     </unit>
-    <unit id="pCpmxa8" name="Use this to create an alias or shortlink to this record. Be sure to make it an absolute link.">
+    <unit id="V.BIy_i" name="Use this to create an alias or shortlink to this record. Be sure to make it an absolute link">
       <segment>
-        <source>Use this to create an alias or shortlink to this record. Be sure to make it an absolute link.</source>
-        <target>Použijte k vytvoření aliasu nebo zkráceného odkazu na tento záznam. Ujistěte se, že se jedná o absolutní odkaz.</target>
+        <source>Use this to create an alias or shortlink to this record. Be sure to make it an absolute link</source>
+        <target>Použijte k vytvoření aliasu nebo zkráceného odkazu na tento záznam. Ujistěte se, že se jedná o absolutní odkaz</target>
       </segment>
     </unit>
     <unit id="FwLQ5cl" name="Use with caution, and only if you know what you're doing">
@@ -103,10 +109,10 @@
         <target><![CDATA[Použijte k nastavení <tt>&lt;meta name="robots"&gt;</tt>]]></target>
       </segment>
     </unit>
-    <unit id="HxdlzS6" name="Use this to set the &lt;tt&gt;&amp;lt;meta name=&quot;og:type&quot;&amp;gt;&lt;/tt&gt;">
+    <unit id="AXJdT4M" name="Use this to set the &lt;tt&gt;&amp;lt;meta property=&quot;og:type&quot;&amp;gt;&lt;/tt&gt;">
       <segment>
-        <source>Use this to set the &lt;tt&gt;&amp;lt;meta name="og:type"&amp;gt;&lt;/tt&gt;</source>
-        <target><![CDATA[Použijte k nastavení <tt>&lt;meta name="og:type"&gt;</tt>]]></target>
+        <source>Use this to set the &lt;tt&gt;&amp;lt;meta property="og:type"&amp;gt;&lt;/tt&gt;</source>
+        <target><![CDATA[Použijte k nastavení <tt>&lt;meta property="og:type"&gt;</tt>]]></target>
       </segment>
     </unit>
     <unit id="z9KeyMt" name="Meta keywords">

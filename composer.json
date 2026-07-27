@@ -32,7 +32,8 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit",
+        "lint:xliff": "@php bin/lint-xliff translations"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
