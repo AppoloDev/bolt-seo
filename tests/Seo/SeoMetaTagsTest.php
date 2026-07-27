@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Appolo\BoltSeo\Tests\Seo;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Twig\Environment;
 use Twig\Markup;
 
@@ -123,6 +124,53 @@ class SeoMetaTagsTest extends SeoTestCase
         $seo = $this->makeSeo('record', ['default' => ['title' => '', 'description' => '']]);
 
         self::assertSame('', $seo->keywords());
+    }
+
+    /**
+     * `keywords_length: 0` is the shipped default and means "keywords are disabled
+     * in the editor" — it must not be handed to Html::trimText(), which treats 0 as
+     * a real limit and chops the last character off before appending an ellipsis.
+     *
+     * @param array<string, mixed> $config
+     */
+    #[DataProvider('keywordsSourceProvider')]
+    public function testKeywordsAreNotTruncatedWhenLengthIsZero(array $config, ?array $seoData): void
+    {
+        $record = $seoData === null ? null : $this->recordWithSeoData($seoData);
+        $seo = $this->makeSeo('record', array_merge($config, ['keywords_length' => 0]), record: $record);
+
+        self::assertSame('keyword one, keyword two', $seo->keywords());
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>, ?array<string, mixed>}>
+     */
+    public static function keywordsSourceProvider(): array
+    {
+        return [
+            'override' => [
+                ['override_default' => ['record' => ['keywords' => 'keyword one, keyword two']]],
+                null,
+            ],
+            'seo field' => [
+                [],
+                ['keywords' => 'keyword one, keyword two'],
+            ],
+            'configured default' => [
+                ['default' => ['title' => '', 'description' => '', 'keywords' => 'keyword one, keyword two']],
+                null,
+            ],
+        ];
+    }
+
+    public function testKeywordsAreStillTruncatedWhenLengthIsSet(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'keywords_length' => 12,
+            'override_default' => ['record' => ['keywords' => 'keyword one, keyword two']],
+        ]);
+
+        self::assertSame('keyword one…', $seo->keywords());
     }
 
     // --- ogtype ------------------------------------------------------------
@@ -290,6 +338,152 @@ class SeoMetaTagsTest extends SeoTestCase
         self::assertSame('website', $seo->ogtype());
         self::assertSame('index, follow', $seo->robots());
         self::assertSame('', $seo->image());
+    }
+
+    // --- malformed `seo` field payloads ------------------------------------
+
+    /**
+     * The `seo` field holds a raw JSON string maintained by the editor's JavaScript,
+     * but nothing guarantees it: fixtures, imports and API writes can put anything
+     * in there. A value that does not decode to an array must degrade to "no SEO
+     * data" and let the normal fallback chain run, not blow up the whole page.
+     */
+    #[DataProvider('malformedSeoPayloadProvider')]
+    public function testMalformedSeoFieldFallsBackToRecordFields(string $payload): void
+    {
+        $record = $this->record([
+            'seo' => $payload,
+            'title' => 'Record Title',
+            'description' => 'Record description',
+        ]);
+        $seo = $this->makeSeo('record', record: $record);
+
+        self::assertSame('Record Title', $seo->title());
+        self::assertSame('Record description', $seo->description());
+        self::assertSame('', $seo->keywords());
+        self::assertSame('website', $seo->ogtype());
+        self::assertSame('index, follow', $seo->robots());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function malformedSeoPayloadProvider(): array
+    {
+        return [
+            'not json at all' => ['this is not json'],
+            'truncated json' => ['{"title": "Half a doc'],
+            'json scalar int' => ['5'],
+            'json scalar string' => ['"just a string"'],
+            'json null' => ['null'],
+            'json list' => ['["title", "description"]'],
+        ];
+    }
+
+    // --- malformed encoding -------------------------------------------------
+
+    /**
+     * cleanUp() collapses whitespace with a `/u` regex, which returns null on
+     * malformed UTF-8 rather than throwing. Returning that from a `string` method
+     * is a TypeError, so a single badly encoded byte anywhere in the content
+     * (a legacy import, a mangled paste) would take the page down.
+     */
+    public function testMalformedUtf8InRecordTitleDoesNotFatal(): void
+    {
+        $record = $this->record(['title' => "Caf\xC3\x28e"]);
+        $seo = $this->makeSeo('record', record: $record, siteName: 'Acme');
+
+        self::assertIsString($seo->title());
+    }
+
+    public function testMalformedUtf8InConfiguredDefaultDoesNotFatal(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => "Caf\xC3\x28e", 'description' => '', 'keywords' => ''],
+        ]);
+
+        self::assertIsString($seo->title());
+    }
+
+    // --- incomplete config --------------------------------------------------
+
+    /**
+     * Bolt copies an extension's default config to config/extensions/ exactly once
+     * and never merges it again (ConfigTrait::initializeConfig), so a site's config
+     * file can legitimately lack any key — an older copy, or one the user commented
+     * out. A missing length key used to reach Html::trimText() as null, which is a
+     * TypeError under strict_types. Rather than duplicating config.yaml's default
+     * here, a missing key simply means "do not trim".
+     */
+    public function testMissingDescriptionLengthDoesNotTruncate(): void
+    {
+        $config = $this->defaultConfig();
+        unset($config['description_length']);
+
+        $description = str_repeat('word ', 60);
+        $seo = $this->makeSeo('record', $config, record: $this->record([
+            'description' => $description,
+        ]), mergeDefaults: false);
+
+        self::assertSame($description, $seo->description());
+    }
+
+    public function testMissingKeywordsLengthDoesNotTruncate(): void
+    {
+        $config = $this->defaultConfig();
+        unset($config['keywords_length']);
+
+        $seo = $this->makeSeo('record', array_merge($config, [
+            'override_default' => ['record' => ['keywords' => 'keyword one, keyword two']],
+        ]), mergeDefaults: false);
+
+        self::assertSame('keyword one, keyword two', $seo->keywords());
+    }
+
+    // --- empty-string config defaults ---------------------------------------
+
+    /**
+     * These getters guarded their configured default with isset(), so an empty
+     * string counted as "configured" and short-circuited the rest of the chain.
+     * The commented override examples shipped in config/config.yaml literally use
+     * `canonical: ''` and `image: ''`, so following the documentation produced an
+     * empty <link rel="canonical">, og:url and twitter:url.
+     */
+    public function testEmptyDefaultCanonicalFallsBackToRequestUri(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => '', 'description' => '', 'keywords' => '', 'canonical' => ''],
+        ]);
+
+        self::assertSame('http://localhost/', $seo->canonical());
+    }
+
+    public function testEmptyDefaultRobotsFallsBackToIndexFollow(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => '', 'description' => '', 'keywords' => '', 'robots' => ''],
+        ]);
+
+        self::assertSame('index, follow', $seo->robots());
+    }
+
+    public function testEmptyDefaultOgtypeFallsBackToWebsite(): void
+    {
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => '', 'description' => '', 'keywords' => '', 'ogtype' => ''],
+        ]);
+
+        self::assertSame('website', $seo->ogtype());
+    }
+
+    public function testEmptyDefaultImageFallsBackToRecordExtras(): void
+    {
+        $record = $this->record([], ['image' => ['url' => 'https://example.test/extra.jpg']]);
+        $seo = $this->makeSeo('record', [
+            'default' => ['title' => '', 'description' => '', 'keywords' => '', 'image' => ''],
+        ], record: $record);
+
+        self::assertSame('https://example.test/extra.jpg', $seo->image());
     }
 
     // --- metatags ----------------------------------------------------------

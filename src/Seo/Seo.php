@@ -96,7 +96,16 @@ class Seo
 
         $this->record = $this->twig->getGlobals()['record'];
         $field = $this->getSeoField($this->record);
-        $this->seoData = $field && $field->__toString() ? json_decode($field->__toString(), true) : [];
+
+        // The `seo` field holds a raw JSON string maintained by the editor's
+        // JavaScript, but nothing guarantees that: fixtures, imports and API writes
+        // can store anything. Anything that does not decode to an array degrades to
+        // "no SEO data" so the normal fallback chain runs instead of fataling.
+        $decoded = $field && $field->__toString()
+            ? json_decode($field->__toString(), true)
+            : [];
+
+        $this->seoData = is_array($decoded) ? $decoded : [];
     }
 
     public function title(): string
@@ -166,19 +175,19 @@ class Seo
 
         if (! empty($this->defaultsOverride['description'])) {
             $description = $this->defaultsOverride['description'];
-            return Html::trimText($description, $this->config['description_length']);
+            return $this->trimDescription($description);
         }
 
         if ($this->seoData && isset($this->seoData['description']) && $this->seoData['description'] !== '') {
             $description = $this->cleanUp($this->seoData['description']);
-            return Html::trimText($description, $this->config['description_length']);
+            return $this->trimDescription($description);
         }
 
         if ($this->record) {
             $field = $this->getField($this->record, 'description');
             if ($field && $field->__toString() !== '') {
                 $description = $this->cleanUp($field->__toString());
-                return Html::trimText($description, $this->config['description_length']);
+                return $this->trimDescription($description);
             }
         }
 
@@ -188,7 +197,7 @@ class Seo
             $description = $this->cleanUp($this->boltConfig->get('general/payoff'));
         }
 
-        return Html::trimText($description, $this->config['description_length']);
+        return $this->trimDescription($description);
     }
 
     public function keywords(): string
@@ -196,13 +205,11 @@ class Seo
         $this->initialize();
 
         if (! empty($this->defaultsOverride['keywords'])) {
-            $keywords = $this->defaultsOverride['keywords'];
-            return Html::trimText($keywords, $this->config['keywords_length']);
+            return $this->trimKeywords($this->defaultsOverride['keywords']);
         }
 
         if ($this->seoData && isset($this->seoData['keywords']) && $this->seoData['keywords'] !== '') {
-            $keywords = $this->cleanUp($this->seoData['keywords']);
-            return Html::trimText($keywords, $this->config['keywords_length']);
+            return $this->trimKeywords($this->cleanUp($this->seoData['keywords']));
         }
 
         if (isset($this->config['default']['keywords'])) {
@@ -211,7 +218,7 @@ class Seo
             $keywords = '';
         }
 
-        return Html::trimText($keywords, $this->config['keywords_length']);
+        return $this->trimKeywords($keywords);
     }
 
     public function ogtype()
@@ -226,7 +233,7 @@ class Seo
             return $this->cleanUp($this->seoData['og']);
         }
 
-        if (isset($this->config['default']['ogtype'])) {
+        if (! empty($this->config['default']['ogtype'])) {
             return $this->cleanUp($this->config['default']['ogtype']);
         }
 
@@ -245,7 +252,7 @@ class Seo
             return $this->cleanUp($this->seoData['robots']);
         }
 
-        if (isset($this->config['default']['robots'])) {
+        if (! empty($this->config['default']['robots'])) {
             return $this->cleanUp($this->config['default']['robots']);
         }
         return 'index, follow';
@@ -266,7 +273,7 @@ class Seo
             }
         }
 
-        if (isset($this->config['default']['image'])) {
+        if (! empty($this->config['default']['image'])) {
             return $this->cleanUp($this->config['default']['image']);
         }
 
@@ -289,7 +296,7 @@ class Seo
             return $this->cleanUp($this->seoData['canonical']);
         }
 
-        if (isset($this->config['default']['canonical'])) {
+        if (! empty($this->config['default']['canonical'])) {
             return $this->cleanUp($this->config['default']['canonical']);
         }
 
@@ -312,6 +319,45 @@ class Seo
 
         $html = $this->twig->render($this->templateMetas, $vars);
         return new Markup($html, 'UTF-8');
+    }
+
+    private function trimDescription(string $description): string
+    {
+        $length = $this->configLength('description_length');
+
+        return $length !== null ? Html::trimText($description, $length) : $description;
+    }
+
+    /**
+     * `keywords_length: 0` is the shipped default and means "the keywords field is
+     * disabled in the editor", not "truncate to nothing". Html::trimText() treats a
+     * length of 0 as a real limit and would chop the last character off and append
+     * an ellipsis, so only truncate when a positive limit is configured.
+     */
+    private function trimKeywords(string $keywords): string
+    {
+        $length = $this->configLength('keywords_length');
+
+        if ($length === null || $length <= 0) {
+            return $keywords;
+        }
+
+        return Html::trimText($keywords, $length);
+    }
+
+    /**
+     * Read a numeric config key defensively. Bolt copies an extension's default
+     * config to config/extensions/ exactly once and never merges it again, so a
+     * site's config file can be missing any key — an older copy, or one the user
+     * commented out. Reading such a key as an int argument would be a TypeError, so
+     * a missing or non-numeric value is treated as unset rather than duplicating
+     * config.yaml's defaults here.
+     */
+    private function configLength(string $key): ?int
+    {
+        $value = $this->config->get($key);
+
+        return is_numeric($value) ? (int) $value : null;
     }
 
     private function postfixTitle(): string
@@ -366,9 +412,12 @@ class Seo
 
         $string = strip_tags($string);
         $string = str_replace(["\r", "\n"], '', $string);
-        $string = preg_replace('/\s+/u', ' ', $string);
 
-        return $string;
+        // preg_replace() returns null on malformed UTF-8 instead of throwing, and
+        // returning that would be a TypeError. A single bad byte from a legacy
+        // import or a mangled paste must not take the page down, so fall back to
+        // the uncollapsed string.
+        return preg_replace('/\s+/u', ' ', $string) ?? $string;
     }
 
     private function getField(Content $content, string $field): ?Field
