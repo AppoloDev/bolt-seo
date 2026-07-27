@@ -10,9 +10,17 @@ use Bolt\Entity\Field;
 
 class ContentField
 {
+    /**
+     * @param array<int, string> $fields
+     */
     public static function getFieldDefinition(Content $content, array $fields = []): ?ContentType
     {
-        $definitionFields = $content->getDefinition()->get('fields');
+        $definition = $content->getDefinition();
+        if ($definition === null) {
+            return null;
+        }
+
+        $definitionFields = $definition->get('fields');
         foreach ($fields as $fieldName) {
             if ($definitionFields->has($fieldName)) {
                 return $definitionFields->get($fieldName);
@@ -22,6 +30,9 @@ class ContentField
         return null;
     }
 
+    /**
+     * @param array<int, string> $fields
+     */
     public static function getField(Content $content, array $fields = []): ?Field
     {
         foreach ($fields as $fieldName) {

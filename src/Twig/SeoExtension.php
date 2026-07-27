@@ -14,6 +14,7 @@ use Bolt\Extension\ExtensionInterface;
 use Bolt\Extension\ExtensionRegistry;
 use Bolt\Utils\Html;
 use Illuminate\Support\Collection;
+use RuntimeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -37,6 +38,9 @@ class SeoExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function seoGetConfig(): array
     {
         return $this->getExtensionConfig()->toArray();
@@ -118,9 +122,17 @@ class SeoExtension extends AbstractExtension
 
     private function getExtension(): ExtensionInterface
     {
-        return $this->extensionRegistry->getExtension('Appolo\\BoltSeo');
+        $extension = $this->extensionRegistry->getExtension('Appolo\\BoltSeo');
+        if ($extension === null) {
+            throw new RuntimeException('The "Appolo\\BoltSeo" extension is not registered.');
+        }
+
+        return $extension;
     }
 
+    /**
+     * @return Collection<string, mixed>
+     */
     private function getExtensionConfig(): Collection
     {
         /** @var Extension $extension */
