@@ -62,21 +62,70 @@ To add the SEO title and Meta tags to your HTML, edit your templates (the
 When you've done this, all pages that make use of these templates will
 automatically have the correct `<title>` tag and the meta- and OG-tags.
 
+### Using individual values
+
+Besides `seo.metatags()`, the `seo` object has a method for each value, so you
+can output them separately or use them in your own tags:
+
+| Method              | Returns                                                 |
+|---------------------|---------------------------------------------------------|
+| `seo.title()`       | The page title, as used in `<title>`                    |
+| `seo.description()` | The meta description                                    |
+| `seo.keywords()`    | The meta keywords                                       |
+| `seo.image()`       | The URL of the image for `og:image`, or an empty string |
+| `seo.robots()`      | The value for `<meta name="robots">`                    |
+| `seo.ogtype()`      | The value for `og:type`                                 |
+| `seo.canonical()`   | The URL for `og:url` and `twitter:url`                  |
+
+```twig
+<meta name="description" content="{{ seo.description() }}">
+<meta property="og:image" content="{{ seo.image() }}">
+```
+
+Each value comes from the first of these that is set: the `override_default`
+entry for the current route, the record's SEO field, the record's own fields,
+and finally the `default` values in `appolo-boltseo.yaml`.
+
+In PHP, for example in your own Twig function, you don't create the `Seo` class
+yourself. The same object is available as the `seo` Twig global:
+
+```php
+use Appolo\BoltSeo\Seo\Seo;
+use Twig\Environment;
+use Twig\TwigFunction;
+
+public function getFunctions(): array
+{
+    return [
+        new TwigFunction('my_description', $this->myDescription(...), ['needs_environment' => true]),
+    ];
+}
+
+public function myDescription(Environment $twig): string
+{
+    /** @var Seo $seo */
+    $seo = $twig->getGlobals()['seo'];
+
+    return $seo->description();
+}
+```
+
 ### Configure the 'meta tags' output
 
 By default, the output of the meta-tags is defined in the file
-`vendor/appolodev/bolt-seo/templates/_metatags.twig`. If you'd like to
+`vendor/appolodev/bolt-seo/templates/_metatags.html.twig`. If you'd like to
 configure this output, you shouldn't edit this file directly. If you do,
 changes will be overwritten on subsequent updates of this extension. Instead,
 in `/config/extensions/appolo-boltseo.yaml` uncomment the following lines:
 
 ```yaml
 templates:
-    meta: _metatags.twig
+    meta: _metatags.html.twig
 ```
 
-Next, copy the file `_metatags.twig` to your theme folder, and the extension
-will pick it up from there.
+Next, copy the file `_metatags.html.twig` to your theme folder, and the
+extension will pick it up from there. The template receives the variables
+`title`, `description`, `keywords`, `image`, `robots`, `ogtype` and `canonical`.
 
 **Note:** This is a new extension, so the functionality is still pretty bare
 bones. What's there works well, but there is probably a lot of functionality to
