@@ -65,17 +65,17 @@ automatically have the correct `<title>` tag and the meta- and OG-tags.
 ### Configure the 'meta tags' output
 
 By default, the output of the meta-tags is defined in the file
-`vendor/appolodev/bolt-seo/templates/_metatags.twig`. If you'd like to
+`vendor/appolodev/bolt-seo/templates/_metatags.html.twig`. If you'd like to
 configure this output, you shouldn't edit this file directly. If you do,
 changes will be overwritten on subsequent updates of this extension. Instead,
 in `/config/extensions/appolo-boltseo.yaml` uncomment the following lines:
 
 ```yaml
 templates:
-    meta: _metatags.twig
+    meta: _metatags.html.twig
 ```
 
-Next, copy the file `_metatags.twig` to your theme folder, and the extension
+Next, copy the file `_metatags.html.twig` to your theme folder, and the extension
 will pick it up from there.
 
 **Note:** This is a new extension, so the functionality is still pretty bare
