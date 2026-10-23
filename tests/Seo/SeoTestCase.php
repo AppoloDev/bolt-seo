@@ -9,6 +9,7 @@ use Bolt\Configuration\Config;
 use Bolt\Configuration\Content\ContentType;
 use Bolt\Entity\Content;
 use Bolt\Entity\Field;
+use Bolt\Twig\HtmlExtension;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,6 +61,7 @@ abstract class SeoTestCase extends TestCase
         ?Request $request = null,
         ?Environment $twig = null,
         bool $mergeDefaults = true,
+        ?HtmlExtension $htmlExtension = null,
     ): Seo {
         if ($mergeDefaults) {
             $config = array_merge($this->defaultConfig(), $config);
@@ -77,6 +79,10 @@ abstract class SeoTestCase extends TestCase
         if ($twig === null) {
             $twig = $this->createMock(Environment::class);
             $twig->method('getGlobals')->willReturn($record !== null ? ['record' => $record] : []);
+            $twig->method('hasExtension')->willReturn($htmlExtension !== null);
+            if ($htmlExtension !== null) {
+                $twig->method('getExtension')->willReturn($htmlExtension);
+            }
         }
 
         $boltConfig = $this->createMock(Config::class);

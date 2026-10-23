@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Appolo\BoltSeo\Tests\Seo;
 
+use Bolt\Twig\HtmlExtension;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Twig\Environment;
 use Twig\Markup;
@@ -318,6 +319,34 @@ class SeoMetaTagsTest extends SeoTestCase
     public function testCanonicalDefaultsToRequestUri(): void
     {
         $seo = $this->makeSeo('record');
+
+        self::assertSame('http://localhost/', $seo->canonical());
+    }
+
+    public function testCanonicalFallsBackToBoltCanonical(): void
+    {
+        $htmlExtension = $this->createMock(HtmlExtension::class);
+        $htmlExtension->method('canonical')->willReturn('https://example.test/page');
+        $seo = $this->makeSeo('record', htmlExtension: $htmlExtension);
+
+        self::assertSame('https://example.test/page', $seo->canonical());
+    }
+
+    public function testCanonicalPrefersSeoFieldOverBoltCanonical(): void
+    {
+        $htmlExtension = $this->createMock(HtmlExtension::class);
+        $htmlExtension->method('canonical')->willReturn('https://example.test/page');
+        $record = $this->recordWithSeoData(['canonical' => 'https://example.test/seo']);
+        $seo = $this->makeSeo('record', record: $record, htmlExtension: $htmlExtension);
+
+        self::assertSame('https://example.test/seo', $seo->canonical());
+    }
+
+    public function testCanonicalFallsBackToRequestUriWhenBoltCanonicalHasNoRoute(): void
+    {
+        $htmlExtension = $this->createMock(HtmlExtension::class);
+        $htmlExtension->method('canonical')->willReturn(null);
+        $seo = $this->makeSeo('record', htmlExtension: $htmlExtension);
 
         self::assertSame('http://localhost/', $seo->canonical());
     }

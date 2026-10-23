@@ -8,6 +8,7 @@ use Bolt\Configuration\Config;
 use Bolt\Configuration\Content\ContentType;
 use Bolt\Entity\Content;
 use Bolt\Entity\Field;
+use Bolt\Twig\HtmlExtension;
 use Bolt\Utils\Html;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Request;
@@ -305,6 +306,18 @@ class Seo
 
         if (! empty($this->config['default']['canonical'])) {
             return $this->cleanUp($this->config['default']['canonical']);
+        }
+
+        // Use the same URL as Bolt's <link rel="canonical">, which honours
+        // `general/canonical` and `remove_default_locale_on_canonical` and drops
+        // the query string. Bolt's Canonical service is private, so it is reached
+        // through its public `canonical()` Twig function. It returns null when no
+        // route has matched.
+        if ($this->twig->hasExtension(HtmlExtension::class)) {
+            $canonical = $this->twig->getExtension(HtmlExtension::class)->canonical();
+            if ($canonical !== null) {
+                return $canonical;
+            }
         }
 
         return $this->request->getUri();
