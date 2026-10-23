@@ -4,11 +4,13 @@ Bolt SEO extension
 The Bolt SEO extension is an extension to help you improve the search engine
 indexing of your Bolt website in a number of ways. It does this by:
 
-  - Allowing you to specify the SEO title and meta-description for your pages.
-  - Adding meta tags to your HTML to facilitate indexing of your pages using meta
-    tags and OG tags.
-  - Override the canonical, if you really want to.
-  - Set the `<meta name="robots">`-tag.
+  - Allowing you to specify the SEO title, meta description and (optionally)
+    meta keywords for your records, with a Google snippet preview in the editor.
+  - Generating the `<title>`, and the meta, Open Graph and Twitter tags for
+    your pages.
+  - Setting the `<meta name="robots">` tag and `og:type` per record.
+  - Overriding the URL used in `og:url` and `twitter:url`, if you really want to.
+  - Setting defaults per route or content type listing, optionally per locale.
 
 ## Compatibility
 
@@ -21,17 +23,20 @@ This README documents usage for **Bolt CMS 6**.
 
 Installation
 -----
-```composer require appolodev/bolt-seo```
+
+```bash
+composer require appolodev/bolt-seo
+```
 
 Setup
 -----
 
 To use this extension, you should add a field to your contenttypes, and add the
-tags to the header of your HMTL templates.
+tags to the header of your HTML templates.
 
-In your contenttypes, you should add a single `seo` field. The extenion will
+In your contenttypes, you should add a single `seo` field. The extension will
 use this to store the data for the different fields that show in the backend
-when editing a record. Simply add it to your fields like this;
+when editing a record. Simply add it to your fields like this:
 
 ```yaml
 pages:
@@ -78,11 +83,28 @@ templates:
 Next, copy the file `_metatags.twig` to your theme folder, and the extension
 will pick it up from there.
 
-**Note:** This is a new extension, so the functionality is still pretty bare
-bones. What's there works well, but there is probably a lot of functionality to
-add, to improve search engine indexing. If you'd like to contribute, or have a
-good idea, feel free to open an issue on the tracker at the
-[SEO Extension repository][gh] on Github.
+### Configuration
+
+The first time the extension runs, Bolt copies its default configuration to
+`config/extensions/appolo-boltseo.yaml`. Every option is documented in that
+file, including:
+
+  - the title separator and postfix, and the maximum lengths of the fields;
+  - which of your content type fields are used as a fallback for the title,
+    description and image;
+  - the `default` values, used when a record doesn't set its own;
+  - `override_default`, to set values per route or content type listing, with
+    optional per-locale values.
+
+The meta keywords field in the editor is disabled by default. To enable it, set
+`keywords_length` to a value above 0, for example `255`.
+
+Bolt never updates this copy, also not when you update the extension. To see
+options added in newer versions, compare your copy with
+`vendor/appolodev/bolt-seo/config/config.yaml`.
+
+**Note:** If you'd like to contribute, or have a good idea, feel free to open
+an issue on the tracker at the [SEO Extension repository][gh] on GitHub.
 
 [gh]: https://github.com/AppoloDev/bolt-seo/issues
 
