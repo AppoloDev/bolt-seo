@@ -126,7 +126,7 @@
         <div>
             <div
                 class="seo_snippet"
-                data-base-url="{{ absolute_url(path( 'record', { 'contentTypeSlug': record.definition.singular_slug, 'slugOrId': 'REPLACE'})) }}"
+                data-base-url="{{ canonical(record.definition.record_route, { 'contentTypeSlug': record.definition.singular_slug, 'slugOrId': 'REPLACE', '_locale': currentlocale|default(null) }) }}"
                 data-base-title="{{ seoFieldValue(record, 'title') }}"
                 data-base-slug="{{ seoFieldValue(record, 'slug') }}"
                 data-base-description="{{ seoFieldValue(record, 'description') }}"
