@@ -27,7 +27,6 @@ class SeoSnippet {
             title: document.querySelector('#seofields-title'),
             description: document.querySelector('#seofields-description'),
             keywords: document.querySelector('#seofields-keywords'),
-            shortlink: document.querySelector('#seofields-shortlink'),
             canonical: document.querySelector('#seofields-canonical'),
             robots: document.querySelector('#seofields-robots'),
             og: document.querySelector('#seofields-og'),

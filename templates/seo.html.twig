@@ -8,7 +8,6 @@
         title: '',
         description: '',
         keywords: '',
-        shortlink: '',
         canonical: '',
         robots: '',
         og: ''
@@ -26,7 +25,6 @@
             {{ block('seo_description') }}
             {{ block('seo_keywords') }}
             {{ block('seo_snippet') }}
-            {{ block('seo_shortlink') }}
             {{ block('seo_canonical') }}
             {{ block('seo_robots') }}
             {{ block('seo_og') }}
@@ -143,31 +141,6 @@
                 <div class="title"></div>
                 <div class="description"></div>
             </div>
-        </div>
-    </div>
-{% endblock %}
-
-{% block seo_shortlink %}
-    <div id="field-text-{{ name }}-shortlink" class="form-group in-compound is-normal">
-        <label for="field-{{ name }}-shortlink" class="editor--label">
-            {{ __("Shortlink") }} ({{ __("alias") }}):
-        </label>
-
-        <div>
-            <input
-                    name="{{ name }}[shortlink]"
-                    class="form-control"
-                    id="seofields-shortlink"
-                    maxlength="255"
-                    type="text"
-                    value="{{ seovalues.shortlink|default('')|trim }}"
-            />
-        </div>
-
-        <div id="field-{{ name }}-shortlink_postfix" class="form--helper">
-            <p>
-                {{ __("Use this to create an alias or shortlink to this record. Be sure to make it an absolute link") }}.
-            </p>
         </div>
     </div>
 {% endblock %}
