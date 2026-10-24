@@ -59,7 +59,14 @@ class SeoExtension extends AbstractExtension
             return null;
         }
 
-        return Html::trimText($field->__toString(), 300);
+        // Decode entities and collapse whitespace like Seo::cleanUp() does: the
+        // snippet preview shows this text, and Twig escapes it again when it is
+        // rendered. A decoded `&nbsp;` becomes a normal space, as on the live page;
+        // inside an HTML attribute, Bolt's Vue editor would otherwise turn it back
+        // into the literal text `&nbsp;`.
+        $text = html_entity_decode(Html::trimText($field->__toString(), 300), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return preg_replace('/\s+/u', ' ', $text) ?? $text;
     }
 
     public function seoFieldValue(Content $content, string $field): string

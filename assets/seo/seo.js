@@ -95,13 +95,17 @@ class SeoSnippet {
             : '';
 
         if (field === 'title' || field === 'description') {
+            // The content field is often a rich-text field, so show it as plain
+            // text, like the server does. Empty editor markup (`<p><br></p>`)
+            // then counts as empty too.
+            const contentValue = this.inputs[field] ? this.stripHtml(this.inputs[field].value) : '';
+
             let value;
             if (
-                this.inputs[field] &&
-                this.inputs[field].value.length > 0 &&
+                contentValue.length > 0 &&
                 seoFieldValue.length === 0
             ) {
-                value = this.inputs[field].value;
+                value = contentValue;
             } else if (seoFieldValue.length > 0) {
                 value = seoFieldValue;
             } else {

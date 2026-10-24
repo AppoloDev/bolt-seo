@@ -176,4 +176,22 @@ class SeoTitleTest extends SeoTestCase
 
         self::assertSame('Bold and spaced', $seo->title());
     }
+
+    public function testCleanUpDecodesEntitiesSoTheTemplateEscapesThemOnlyOnce(): void
+    {
+        $record = $this->record(['title' => 'Fish&nbsp;&amp; Chips &quot;Deluxe&quot;']);
+
+        $seo = $this->makeSeo('record', record: $record);
+
+        self::assertSame('Fish & Chips "Deluxe"', $seo->title());
+    }
+
+    public function testCleanUpKeepsEncodedAngleBracketsAsText(): void
+    {
+        $record = $this->record(['title' => '<p>1 &lt; 2 &amp;&amp; 3 &gt; 2</p>']);
+
+        $seo = $this->makeSeo('record', record: $record);
+
+        self::assertSame('1 < 2 && 3 > 2', $seo->title());
+    }
 }

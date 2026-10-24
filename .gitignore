@@ -11,3 +11,6 @@ appveyor.yaml
 vendor/
 var/
 /.phpunit.cache
+
+### Node
+node_modules/

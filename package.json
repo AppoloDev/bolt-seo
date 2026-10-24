@@ -1,0 +1,12 @@
+{
+    "name": "appolodev-bolt-seo-assets",
+    "private": true,
+    "description": "Tests for the SEO field's admin JavaScript (assets/seo/seo.js)",
+    "license": "MIT",
+    "scripts": {
+        "test": "node --test \"tests/js/**/*.test.mjs\""
+    },
+    "devDependencies": {
+        "jsdom": "^30.1.3"
+    }
+}

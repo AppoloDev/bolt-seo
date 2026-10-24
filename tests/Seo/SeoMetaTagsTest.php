@@ -46,6 +46,22 @@ class SeoMetaTagsTest extends SeoTestCase
         self::assertSame('Record description', $seo->description());
     }
 
+    public function testDescriptionFromRichTextRecordFieldHasNoTagsOrEntities(): void
+    {
+        $record = $this->record(['description' => "<p>Fish&nbsp;and chips &amp; peas.</p>\n<p>Second <strong>paragraph</strong>.</p>"]);
+        $seo = $this->makeSeo('record', record: $record);
+
+        self::assertSame('Fish and chips & peas.Second paragraph.', $seo->description());
+    }
+
+    public function testDescriptionDecodesEntitiesInSeoField(): void
+    {
+        $record = $this->recordWithSeoData(['description' => 'Fish &amp; chips']);
+        $seo = $this->makeSeo('record', record: $record);
+
+        self::assertSame('Fish & chips', $seo->description());
+    }
+
     public function testSingletonOnListingRouteUsesSeoFieldDescription(): void
     {
         // A singleton served on the listing route must expose its own SEO
