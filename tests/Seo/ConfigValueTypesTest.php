@@ -223,6 +223,90 @@ class ConfigValueTypesTest extends SeoTestCase
         self::assertSame('', $seo->title());
     }
 
+    // --- Bolt's sitename and payoff -----------------------------------------
+
+    /**
+     * @return array<string, array{mixed, string}>
+     */
+    public static function boltValueProvider(): array
+    {
+        return [
+            'int' => [2024, '2024'],
+            'true' => [true, ''],
+            'list' => [['Fish and chips'], ''],
+        ];
+    }
+
+    /**
+     * Read like this extension's config. A number used to be a TypeError.
+     */
+    #[DataProvider('boltValueProvider')]
+    public function testSitenameAndPayoff(mixed $value, string $expected): void
+    {
+        $seo = $this->makeSeo('record', siteName: $value, payoff: $value);
+
+        self::assertSame($expected, $seo->title());
+        self::assertSame($expected, $seo->description());
+    }
+
+    // --- title postfix ------------------------------------------------------
+
+    /**
+     * A postfix that is not text means no postfix. `true` used to print `1`.
+     */
+    #[DataProvider('nonTextProvider')]
+    public function testTitlePostfixThatIsNotTextMeansNoPostfix(mixed $value): void
+    {
+        $seo = $this->makeSeo('record', [
+            'title_postfix' => $value,
+            'override_default' => ['record' => ['title' => 'Fish and chips']],
+        ]);
+
+        self::assertSame('Fish and chips', $seo->title());
+    }
+
+    /**
+     * An empty postfix falls back to the sitename, read like the postfix itself.
+     */
+    #[DataProvider('boltValueProvider')]
+    public function testTitlePostfixFallsBackToSitename(mixed $siteName, string $expected): void
+    {
+        $seo = $this->makeSeo('record', [
+            'title_postfix' => '',
+            'override_default' => ['record' => ['title' => 'Fish and chips']],
+        ], siteName: $siteName);
+
+        self::assertSame($expected === '' ? 'Fish and chips' : "Fish and chips | {$expected}", $seo->title());
+    }
+
+    // --- record extras image ------------------------------------------------
+
+    /**
+     * @return array<string, array{mixed, string}>
+     */
+    public static function extrasImageProvider(): array
+    {
+        return [
+            'url' => [['url' => '/files/fish.jpg'], '/files/fish.jpg'],
+            'numeric url' => [['url' => 2024], '2024'],
+            'no url' => [['alt' => 'Fish and chips'], ''],
+            'url is not text' => [['url' => true], ''],
+            'image is not a map' => ['/files/fish.jpg', ''],
+        ];
+    }
+
+    /**
+     * The last fallback for the image. A missing url or one that is not text used
+     * to be a TypeError.
+     */
+    #[DataProvider('extrasImageProvider')]
+    public function testRecordExtrasImage(mixed $image, string $expected): void
+    {
+        $seo = $this->makeSeo('record', record: $this->record([], ['image' => $image]));
+
+        self::assertSame($expected, $seo->image());
+    }
+
     // --- fields config ------------------------------------------------------
 
     public function testSingleFieldNameIsAccepted(): void

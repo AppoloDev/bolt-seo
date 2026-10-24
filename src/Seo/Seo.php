@@ -30,10 +30,10 @@ class Seo
     protected ?ContentType $contentType = null;
     protected ?string $routeType;
 
-    /** @var array<string, mixed>|null */
+    /** @var array<mixed>|null */
     protected ?array $defaultsOverride = null;
 
-    /** @var array<string, mixed> */
+    /** @var array<mixed> */
     protected array $seoData = [];
 
     /**
@@ -192,7 +192,10 @@ class Seo
             return $this->cleanUp($defaultTitle);
         }
 
-        return $this->cleanUp($this->boltConfig->get('general/sitename'));
+        // Bolt's sitename and payoff are read like this extension's config: a number
+        // (`sitename: 2024`) is text, and anything else that is not text is empty.
+        // A number used to be a TypeError.
+        return $this->cleanUp(ConfigValue::string($this->boltConfig->get('general/sitename')));
     }
 
     public function description(): string
@@ -221,7 +224,7 @@ class Seo
         if ($description !== '') {
             $description = $this->cleanUp($description);
         } else {
-            $description = $this->cleanUp($this->boltConfig->get('general/payoff'));
+            $description = $this->cleanUp(ConfigValue::string($this->boltConfig->get('general/payoff')));
         }
 
         return $this->trimDescription($description);
@@ -308,8 +311,15 @@ class Seo
             return $this->cleanUp($image);
         }
 
-        if ($this->record instanceof Content && ! empty($this->record->getExtras()['image'])) {
-            return $this->record->getExtras()['image']['url'];
+        // getExtras() builds every link and excerpt of the record, so call it once.
+        // An extras image without a url that is text is skipped; a missing url
+        // used to be a TypeError.
+        if ($this->record instanceof Content) {
+            $extrasImage = $this->record->getExtras()['image'] ?? null;
+            $url = is_array($extrasImage) ? ConfigValue::string($extrasImage['url'] ?? null) : null;
+            if ($url !== null && $url !== '') {
+                return $url;
+            }
         }
 
         return '';
@@ -408,13 +418,16 @@ class Seo
 
     private function postfixTitle(): string
     {
-        if ($this->config->get('title_postfix') === false) {
+        $titlePostfix = $this->config->get('title_postfix');
+        if ($titlePostfix === false) {
             return '';
         }
 
-        $postfix = $this->config->get('title_postfix') !== ''
-            ? $this->config->get('title_postfix')
-            : $this->boltConfig->get('general/sitename');
+        // A postfix that is not text, like `true` (which used to print `1`) or a
+        // list, means no postfix, as does a sitename that is not text.
+        $postfix = ConfigValue::string(
+            $titlePostfix !== '' ? $titlePostfix : $this->boltConfig->get('general/sitename')
+        );
 
         // Nothing to append (no configured postfix and no sitename): omit the
         // separator too — there is nothing to separate.
@@ -436,8 +449,8 @@ class Seo
      * base override for the current request locale. Locale values win; anything not
      * set for the locale falls back to the base values.
      *
-     * @param array<string, mixed> $override
-     * @return array<string, mixed>
+     * @param array<mixed> $override
+     * @return array<mixed>
      */
     private function resolveLocaleOverride(array $override): array
     {

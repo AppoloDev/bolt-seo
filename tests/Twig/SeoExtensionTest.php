@@ -221,6 +221,27 @@ class SeoExtensionTest extends TestCase
         self::assertSame('', $extension->seoFieldValue($this->contentWithFields([]), 'postfix'));
     }
 
+    /**
+     * Like Seo::postfixTitle(): a postfix that is not text means no postfix
+     * (`true` used to print `1`), as does a sitename that is not text.
+     */
+    public function testSeoFieldValuePostfixThatIsNotTextMeansNoPostfix(): void
+    {
+        $extension = $this->makeExtension(['title_postfix' => true, 'title_separator' => '|']);
+
+        self::assertSame('', $extension->seoFieldValue($this->contentWithFields([]), 'postfix'));
+    }
+
+    public function testSeoFieldValuePostfixIgnoresASitenameThatIsNotText(): void
+    {
+        $boltConfig = $this->createMock(Config::class);
+        $boltConfig->method('get')->willReturn(['Acme']);
+
+        $extension = $this->makeExtension(['title_postfix' => '', 'title_separator' => '|'], boltConfig: $boltConfig);
+
+        self::assertSame('', $extension->seoFieldValue($this->contentWithFields([]), 'postfix'));
+    }
+
     public function testSeoFieldValueUnknownFieldReturnsEmptyString(): void
     {
         $extension = $this->makeExtension(['fields' => []]);

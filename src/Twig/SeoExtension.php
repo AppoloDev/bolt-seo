@@ -90,11 +90,13 @@ class SeoExtension extends AbstractExtension
                 // empty postfix falls back to the sitename. When the resolved postfix
                 // is empty (no postfix and no sitename) the separator is omitted too —
                 // there is nothing to separate.
-                if ($this->getExtensionConfig()->get('title_postfix') !== false) {
-                    $titlePostfix = $this->getExtensionConfig()->get('title_postfix') !== ''
-                        ? $this->getExtensionConfig()->get('title_postfix')
-                        : $this->config->get('general/sitename')
-                    ;
+                $titlePostfix = $this->getExtensionConfig()->get('title_postfix');
+                if ($titlePostfix !== false) {
+                    // Like Seo::postfixTitle(): a postfix or sitename that is not text
+                    // means no postfix.
+                    $titlePostfix = ConfigValue::string(
+                        $titlePostfix !== '' ? $titlePostfix : $this->config->get('general/sitename')
+                    );
 
                     if ($titlePostfix === null || $titlePostfix === '') {
                         return '';

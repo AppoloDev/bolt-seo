@@ -2,7 +2,8 @@
 title_separator: "|"
 
 # The postfix to append to titles. Leave this blank to use the 'sitename' from config.yml.
-# Set it to false (no quotes!) to use no postfix at all.
+# Set it to false (no quotes!) to use no postfix at all. Any other value that isn't
+# text, like true, also means no postfix.
 title_postfix: ''
 
 # The length used for the title and meta description. Note that increasing these values
