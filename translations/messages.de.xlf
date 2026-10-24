@@ -97,10 +97,10 @@
         <target><![CDATA[Wird als <tt>&lt;meta name="description"&gt;</tt> verwendet und in Suchmaschinen angezeigt]]></target>
       </segment>
     </unit>
-    <unit id="0XJxYrt" name="Use this to override the &lt;tt&gt;&amp;lt;link rel=&quot;canonical&quot;&amp;gt;&lt;/tt&gt;">
+    <unit id="bSyLPWC" name="Use this to override the URL in &lt;tt&gt;&amp;lt;meta property=&quot;og:url&quot;&amp;gt;&lt;/tt&gt; and &lt;tt&gt;&amp;lt;meta property=&quot;twitter:url&quot;&amp;gt;&lt;/tt&gt;">
       <segment>
-        <source>Use this to override the &lt;tt&gt;&amp;lt;link rel="canonical"&amp;gt;&lt;/tt&gt;</source>
-        <target><![CDATA[Verwenden Sie dies, um den <tt>&lt;link rel="canonical"&gt;</tt> zu überschreiben]]></target>
+        <source>Use this to override the URL in &lt;tt&gt;&amp;lt;meta property="og:url"&amp;gt;&lt;/tt&gt; and &lt;tt&gt;&amp;lt;meta property="twitter:url"&amp;gt;&lt;/tt&gt;</source>
+        <target><![CDATA[Verwenden Sie dies, um die URL in <tt>&lt;meta property="og:url"&gt;</tt> und <tt>&lt;meta property="twitter:url"&gt;</tt> zu überschreiben]]></target>
       </segment>
     </unit>
     <unit id="tGAPy_h" name="Use this to set the &lt;tt&gt;&amp;lt;meta name=&quot;robots&quot;&amp;gt;&lt;/tt&gt;">
