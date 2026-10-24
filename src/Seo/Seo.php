@@ -431,6 +431,9 @@ class Seo
         }
 
         $string = strip_tags($string);
+        // Rich-text fields store entities (`&nbsp;`, `&amp;`). Decode them, or the
+        // template escapes them a second time and `&amp;nbsp;` reaches the page.
+        $string = html_entity_decode($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $string = str_replace(["\r", "\n"], '', $string);
 
         // preg_replace() returns null on malformed UTF-8 instead of throwing, and

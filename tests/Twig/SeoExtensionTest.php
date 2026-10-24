@@ -117,6 +117,30 @@ class SeoExtensionTest extends TestCase
         self::assertSame('My Title', $extension->seoField($content, 'title'));
     }
 
+    public function testSeoFieldStripsTagsAndDecodesEntities(): void
+    {
+        $extension = $this->makeExtension(['fields' => ['description' => ['body']]]);
+        $content = $this->contentWithFields(['body' => '<p>Fish &amp; <strong>chips</strong> &lt;3</p>']);
+
+        self::assertSame('Fish & chips <3', $extension->seoField($content, 'description'));
+    }
+
+    public function testSeoFieldTurnsNonBreakingSpacesIntoNormalSpaces(): void
+    {
+        $extension = $this->makeExtension(['fields' => ['description' => ['body']]]);
+        $content = $this->contentWithFields(['body' => "<p>Fish&nbsp;and\u{a0}chips</p>"]);
+
+        self::assertSame('Fish and chips', $extension->seoField($content, 'description'));
+    }
+
+    public function testSeoFieldValueDescriptionUsesTheDecodedContentField(): void
+    {
+        $extension = $this->makeExtension(['fields' => ['description' => ['body']]]);
+        $content = $this->contentWithFields(['body' => '<p>Fish &amp; chips</p>']);
+
+        self::assertSame('Fish & chips', $extension->seoFieldValue($content, 'description'));
+    }
+
     // --- seoFieldValue -----------------------------------------------------
 
     public function testSeoFieldValueTitleUsesFieldWhenPresent(): void
