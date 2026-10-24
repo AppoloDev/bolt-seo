@@ -44,8 +44,10 @@ default:
 #    robots: [ chief-editor, admin, developer, root ]
 #    ogtype: [ chief-editor, admin, developer, root ]
 
+# Use your own copy of the meta tags template. The path is relative to your theme folder,
+# so a subfolder works too, for example `partials/seo/_metatags.html.twig`.
 #templates:
-#    meta: _partials/_metatags.html.twig
+#    meta: _metatags.html.twig
 
 # You can override default value for specific type of route
 # This take precedence over the SEO fields in content and the default configuration
