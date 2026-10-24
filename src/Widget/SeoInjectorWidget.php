@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Appolo\BoltSeo\Widget;
 
+use Bolt\Extension\BaseExtension;
 use Bolt\Widget\BaseWidget;
 use Bolt\Widget\Injector\RequestZone;
 use Bolt\Widget\Injector\Target;
@@ -23,10 +24,16 @@ class SeoInjectorWidget extends BaseWidget implements TwigAwareInterface
      */
     public function run(array $params = []): ?string
     {
-        $request = $this->getExtension()->getRequest();
+        // Without a Bolt extension to get the request from, inject nothing.
+        $extension = $this->getExtension();
+        if (! $extension instanceof BaseExtension) {
+            return null;
+        }
+
+        $request = $extension->getRequest();
 
         if (! \in_array($request->get('_route'), ['bolt_content_edit', 'bolt_content_new', 'bolt_content_duplicate'], true) ||
-            ($this->getExtension()->getRequest()->getMethod() !== 'GET')) {
+            ($request->getMethod() !== 'GET')) {
             return null;
         }
 

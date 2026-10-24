@@ -7,6 +7,7 @@ namespace Appolo\BoltSeo\Seo;
 use Bolt\Configuration\Content\ContentType;
 use Bolt\Entity\Content;
 use Bolt\Entity\Field;
+use Illuminate\Support\Collection;
 
 class ContentField
 {
@@ -20,10 +21,17 @@ class ContentField
             return null;
         }
 
+        // A field name without a definition is skipped, so the next configured name
+        // is tried. It used to end the lookup (null) or cause a TypeError.
         $definitionFields = $definition->get('fields');
+        if (! $definitionFields instanceof Collection) {
+            return null;
+        }
+
         foreach ($fields as $fieldName) {
-            if ($definitionFields->has($fieldName)) {
-                return $definitionFields->get($fieldName);
+            $fieldDefinition = $definitionFields->get($fieldName);
+            if ($fieldDefinition instanceof ContentType) {
+                return $fieldDefinition;
             }
         }
 
