@@ -43,28 +43,10 @@
         <target>domyslny-tytul</target>
       </segment>
     </unit>
-    <unit id="ORnQHm." name="Shortlink">
-      <segment>
-        <source>Shortlink</source>
-        <target>Krótki link</target>
-      </segment>
-    </unit>
-    <unit id="GgpqNso" name="alias">
-      <segment>
-        <source>alias</source>
-        <target>alias</target>
-      </segment>
-    </unit>
     <unit id="..3kd27" name="Canonical Link">
       <segment>
         <source>Canonical Link</source>
         <target>Link kanoniczny</target>
-      </segment>
-    </unit>
-    <unit id="V.BIy_i" name="Use this to create an alias or shortlink to this record. Be sure to make it an absolute link">
-      <segment>
-        <source>Use this to create an alias or shortlink to this record. Be sure to make it an absolute link</source>
-        <target>Użyj tego, aby utworzyć alias lub krótki link do tego rekordu. Upewnij się, że jest to link bezwzględny</target>
       </segment>
     </unit>
     <unit id="FwLQ5cl" name="Use with caution, and only if you know what you're doing">
