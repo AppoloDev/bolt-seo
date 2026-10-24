@@ -46,24 +46,30 @@ class Seo
         private readonly Request $request,
         private readonly TranslatorInterface $translator
     ) {
-        $templateConfig = $this->config->get('templates');
-        if ($templateConfig && isset($templateConfig['meta']) && $templateConfig['meta'] !== '') {
-            $this->templateMetas = $templateConfig['meta'];
+        // `templates.meta` must be a template name; anything else keeps the default.
+        $templateMetas = ConfigValue::string(ConfigValue::array($this->config->get('templates'))['meta'] ?? null);
+        if ($templateMetas !== null && $templateMetas !== '') {
+            $this->templateMetas = $templateMetas;
         }
 
-        $this->routeType = $this->request->attributes->get('_route');
+        // A `_route` that is not text is treated as no route, like a 404 page.
+        $routeType = $this->request->attributes->get('_route');
+        $this->routeType = is_string($routeType) ? $routeType : null;
     }
 
     public function initialize(): void
     {
         if (! $this->defaultsOverride && isset($this->config['override_default'])) {
-            $overrides = $this->config['override_default'];
-            if (isset($overrides[$this->routeType])) {
-                $this->defaultsOverride = $this->resolveLocaleOverride($overrides[$this->routeType]);
+            $overrides = ConfigValue::array($this->config['override_default']);
+            // Without a matched route, PHP looked up a null key as '', so keep that.
+            $routeKey = $this->routeType ?? '';
+            if (isset($overrides[$routeKey])) {
+                // An override entry that is not a map (e.g. `homepage: 'Home'`) sets nothing.
+                $this->defaultsOverride = $this->resolveLocaleOverride(ConfigValue::array($overrides[$routeKey]));
             } elseif (in_array($this->routeType, ['listing', 'listing_locale'], true)) {
                 $slug = $this->request->get('contentTypeSlug');
-                if ($slug !== null && isset($overrides[$slug])) {
-                    $this->defaultsOverride = $this->resolveLocaleOverride($overrides[$slug]);
+                if (is_string($slug) && isset($overrides[$slug])) {
+                    $this->defaultsOverride = $this->resolveLocaleOverride(ConfigValue::array($overrides[$slug]));
                 }
             } elseif (is_string($this->routeType) && str_ends_with($this->routeType, '_locale')) {
                 // Localized routes are named `<route>_locale` (e.g. `homepage_locale`).
@@ -71,7 +77,7 @@ class Seo
                 // optional `locales:` block) covers both the default and localized pages.
                 $baseRoute = mb_substr($this->routeType, 0, -mb_strlen('_locale'));
                 if (isset($overrides[$baseRoute])) {
-                    $this->defaultsOverride = $this->resolveLocaleOverride($overrides[$baseRoute]);
+                    $this->defaultsOverride = $this->resolveLocaleOverride(ConfigValue::array($overrides[$baseRoute]));
                 }
             }
         }
@@ -79,8 +85,9 @@ class Seo
         switch ($this->routeType) {
             case 'listing':
             case 'listing_locale':
+                // Without a content type slug there is no content type to name the page after.
                 $contentTypeSlug = $this->request->get('contentTypeSlug');
-                $this->contentType = $this->boltConfig->getContentType($contentTypeSlug);
+                $this->contentType = is_string($contentTypeSlug) ? $this->boltConfig->getContentType($contentTypeSlug) : null;
                 // A singleton content type is served on the listing route (its slug
                 // equals the content type slug), but it renders a single record and
                 // exposes a `record` global just like a detail route. Honour that
@@ -97,12 +104,19 @@ class Seo
 
     private function loadRecordSeoFromTwig(): void
     {
-        if ($this->record instanceof Content || ! isset($this->twig->getGlobals()['record'])) {
+        if ($this->record instanceof Content) {
             return;
         }
 
-        $this->record = $this->twig->getGlobals()['record'];
-        $field = $this->getSeoField($this->record);
+        // A theme or another extension can set a `record` global that is not a
+        // Content entity; it has no SEO data to offer, so ignore it.
+        $record = $this->twig->getGlobals()['record'] ?? null;
+        if (! $record instanceof Content) {
+            return;
+        }
+
+        $this->record = $record;
+        $field = $this->getSeoField($record);
 
         // The `seo` field holds a raw JSON string maintained by the editor's
         // JavaScript, but nothing guarantees that: fixtures, imports and API writes
@@ -119,8 +133,9 @@ class Seo
     {
         $this->initialize();
 
-        if (! empty($this->defaultsOverride['title'])) {
-            return $this->cleanUp($this->defaultsOverride['title'] . $this->postfixTitle());
+        $overrideTitle = $this->overrideValue('title');
+        if ($overrideTitle !== '') {
+            return $this->cleanUp($overrideTitle . $this->postfixTitle());
         }
 
         switch ($this->routeType) {
@@ -129,8 +144,9 @@ class Seo
                 // A singleton rendered on the listing route carries its own SEO
                 // field and title; prefer those before falling back to the content
                 // type name (which is all a real collection listing has).
-                if ($this->seoData && isset($this->seoData['title']) && $this->seoData['title'] !== '') {
-                    return $this->cleanUp($this->seoData['title'] . $this->postfixTitle());
+                $seoTitle = $this->seoValue('title');
+                if ($seoTitle !== '') {
+                    return $this->cleanUp($seoTitle . $this->postfixTitle());
                 }
 
                 if ($this->record) {
@@ -141,8 +157,9 @@ class Seo
                 }
 
                 if ($this->contentType) {
+                    // A name that is not text counts as empty, as a missing name always did.
                     return $this->cleanUp(
-                        $this->contentType->get('name') . $this->postfixTitle()
+                        ConfigValue::string($this->contentType->get('name')) . $this->postfixTitle()
                     );
                 }
                 break;
@@ -156,8 +173,9 @@ class Seo
                     ) . $this->postfixTitle()
                 );
             default:
-                if ($this->seoData && isset($this->seoData['title']) && $this->seoData['title'] !== '') {
-                    return $this->cleanUp($this->seoData['title'] . $this->postfixTitle());
+                $seoTitle = $this->seoValue('title');
+                if ($seoTitle !== '') {
+                    return $this->cleanUp($seoTitle . $this->postfixTitle());
                 }
 
                 if ($this->record) {
@@ -169,8 +187,9 @@ class Seo
                 break;
         }
 
-        if (isset($this->config['default']['title']) && $this->config['default']['title'] !== '') {
-            return $this->cleanUp($this->config['default']['title']);
+        $defaultTitle = $this->defaultValue('title');
+        if ($defaultTitle !== '') {
+            return $this->cleanUp($defaultTitle);
         }
 
         return $this->cleanUp($this->boltConfig->get('general/sitename'));
@@ -180,14 +199,14 @@ class Seo
     {
         $this->initialize();
 
-        if (! empty($this->defaultsOverride['description'])) {
-            $description = $this->defaultsOverride['description'];
+        $description = $this->overrideValue('description');
+        if ($description !== '') {
             return $this->trimDescription($description);
         }
 
-        if ($this->seoData && isset($this->seoData['description']) && $this->seoData['description'] !== '') {
-            $description = $this->cleanUp($this->seoData['description']);
-            return $this->trimDescription($description);
+        $description = $this->seoValue('description');
+        if ($description !== '') {
+            return $this->trimDescription($this->cleanUp($description));
         }
 
         if ($this->record) {
@@ -198,8 +217,9 @@ class Seo
             }
         }
 
-        if (isset($this->config['default']['description']) && $this->config['default']['description'] !== '') {
-            $description = $this->cleanUp($this->config['default']['description']);
+        $description = $this->defaultValue('description');
+        if ($description !== '') {
+            $description = $this->cleanUp($description);
         } else {
             $description = $this->cleanUp($this->boltConfig->get('general/payoff'));
         }
@@ -211,37 +231,36 @@ class Seo
     {
         $this->initialize();
 
-        if (! empty($this->defaultsOverride['keywords'])) {
-            return $this->trimKeywords($this->defaultsOverride['keywords']);
+        $keywords = $this->overrideValue('keywords');
+        if ($keywords !== '') {
+            return $this->trimKeywords($keywords);
         }
 
-        if ($this->seoData && isset($this->seoData['keywords']) && $this->seoData['keywords'] !== '') {
-            return $this->trimKeywords($this->cleanUp($this->seoData['keywords']));
+        $keywords = $this->seoValue('keywords');
+        if ($keywords !== '') {
+            return $this->trimKeywords($this->cleanUp($keywords));
         }
 
-        if (isset($this->config['default']['keywords'])) {
-            $keywords = $this->cleanUp($this->config['default']['keywords']);
-        } else {
-            $keywords = '';
-        }
-
-        return $this->trimKeywords($keywords);
+        return $this->trimKeywords($this->cleanUp($this->defaultValue('keywords')));
     }
 
     public function ogtype(): string
     {
         $this->initialize();
 
-        if (! empty($this->defaultsOverride['ogtype'])) {
-            return (string) $this->defaultsOverride['ogtype'];
+        $ogtype = $this->overrideValue('ogtype');
+        if ($ogtype !== '') {
+            return $ogtype;
         }
 
-        if ($this->seoData && isset($this->seoData['og']) && $this->seoData['og'] !== '') {
-            return $this->cleanUp($this->seoData['og']);
+        $ogtype = $this->seoValue('og');
+        if ($ogtype !== '') {
+            return $this->cleanUp($ogtype);
         }
 
-        if (! empty($this->config['default']['ogtype'])) {
-            return $this->cleanUp($this->config['default']['ogtype']);
+        $ogtype = $this->defaultValue('ogtype');
+        if ($ogtype !== '') {
+            return $this->cleanUp($ogtype);
         }
 
         return 'website';
@@ -251,16 +270,19 @@ class Seo
     {
         $this->initialize();
 
-        if (! empty($this->defaultsOverride['robots'])) {
-            return (string) $this->defaultsOverride['robots'];
+        $robots = $this->overrideValue('robots');
+        if ($robots !== '') {
+            return $robots;
         }
 
-        if ($this->seoData && isset($this->seoData['robots']) && $this->seoData['robots'] !== '') {
-            return $this->cleanUp($this->seoData['robots']);
+        $robots = $this->seoValue('robots');
+        if ($robots !== '') {
+            return $this->cleanUp($robots);
         }
 
-        if (! empty($this->config['default']['robots'])) {
-            return $this->cleanUp($this->config['default']['robots']);
+        $robots = $this->defaultValue('robots');
+        if ($robots !== '') {
+            return $this->cleanUp($robots);
         }
         return 'index, follow';
     }
@@ -269,8 +291,9 @@ class Seo
     {
         $this->initialize();
 
-        if (! empty($this->defaultsOverride['image'])) {
-            return $this->defaultsOverride['image'];
+        $image = $this->overrideValue('image');
+        if ($image !== '') {
+            return $image;
         }
 
         if ($this->record) {
@@ -280,8 +303,9 @@ class Seo
             }
         }
 
-        if (! empty($this->config['default']['image'])) {
-            return $this->cleanUp($this->config['default']['image']);
+        $image = $this->defaultValue('image');
+        if ($image !== '') {
+            return $this->cleanUp($image);
         }
 
         if ($this->record instanceof Content && ! empty($this->record->getExtras()['image'])) {
@@ -295,16 +319,19 @@ class Seo
     {
         $this->initialize();
 
-        if (! empty($this->defaultsOverride['canonical'])) {
-            return $this->defaultsOverride['canonical'];
+        $canonical = $this->overrideValue('canonical');
+        if ($canonical !== '') {
+            return $canonical;
         }
 
-        if ($this->seoData && isset($this->seoData['canonical']) && $this->seoData['canonical'] !== '') {
-            return $this->cleanUp($this->seoData['canonical']);
+        $canonical = $this->seoValue('canonical');
+        if ($canonical !== '') {
+            return $this->cleanUp($canonical);
         }
 
-        if (! empty($this->config['default']['canonical'])) {
-            return $this->cleanUp($this->config['default']['canonical']);
+        $canonical = $this->defaultValue('canonical');
+        if ($canonical !== '') {
+            return $this->cleanUp($canonical);
         }
 
         // Use the same URL as Bolt's <link rel="canonical">, which honours
@@ -395,9 +422,11 @@ class Seo
             return '';
         }
 
-        $separator = $this->config->get('title_separator') !== ''
-            ? $this->config->get('title_separator')
-            : '|';
+        // A separator that is not text is left out, like a missing `title_separator`.
+        $separator = ConfigValue::string($this->config->get('title_separator'));
+        if ($separator === '') {
+            $separator = '|';
+        }
 
         return sprintf(' %s %s', $separator, $postfix);
     }
@@ -423,6 +452,26 @@ class Seo
         return array_merge($override, is_array($localeOverride) ? $localeOverride : []);
     }
 
+    /*
+     * The three sources of a meta value, read with the rules of ConfigValue: ''
+     * means "not set here, try the next source".
+     */
+
+    private function overrideValue(string $key): string
+    {
+        return ConfigValue::string($this->defaultsOverride[$key] ?? null) ?? '';
+    }
+
+    private function seoValue(string $key): string
+    {
+        return ConfigValue::string($this->seoData[$key] ?? null) ?? '';
+    }
+
+    private function defaultValue(string $key): string
+    {
+        return ConfigValue::string(ConfigValue::array($this->config->get('default'))[$key] ?? null) ?? '';
+    }
+
     private function cleanUp(?string $string): string
     {
         if ($string === null) {
@@ -444,12 +493,7 @@ class Seo
 
     private function getField(Content $content, string $field): ?Field
     {
-        $fieldsConfig = $this->config->get('fields');
-        if (! isset($fieldsConfig[$field])) {
-            return null;
-        }
-
-        return ContentField::getField($content, $fieldsConfig[$field]);
+        return ContentField::getField($content, ConfigValue::fieldNames($this->config->get('fields'), $field));
     }
 
     private function getSeoField(Content $content): ?Field

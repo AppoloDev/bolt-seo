@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Appolo\BoltSeo\Twig;
 
 use Appolo\BoltSeo\Extension;
+use Appolo\BoltSeo\Seo\ConfigValue;
 use Appolo\BoltSeo\Seo\ContentField;
 use Bolt\Configuration\Config;
 use Bolt\Configuration\Content\ContentType;
@@ -48,12 +49,7 @@ class SeoExtension extends AbstractExtension
 
     public function seoField(Content $content, string $field): ?string
     {
-        $fieldsConfig = $this->getExtensionConfig()->get('fields');
-        if (! isset($fieldsConfig[$field])) {
-            return null;
-        }
-
-        $field = ContentField::getField($content, $fieldsConfig[$field]);
+        $field = ContentField::getField($content, $this->fieldNames($field));
 
         if (! $field instanceof Field) {
             return null;
@@ -104,9 +100,11 @@ class SeoExtension extends AbstractExtension
                         return '';
                     }
 
-                    $titleSeparator = $this->getExtensionConfig()->get('title_separator') !== ''
-                        ? $this->getExtensionConfig()->get('title_separator')
-                        : '|';
+                    // A separator that is not text is left out, like in Seo::postfixTitle().
+                    $titleSeparator = ConfigValue::string($this->getExtensionConfig()->get('title_separator'));
+                    if ($titleSeparator === '') {
+                        $titleSeparator = '|';
+                    }
 
                     return " {$titleSeparator} {$titlePostfix}";
                 }
@@ -119,12 +117,15 @@ class SeoExtension extends AbstractExtension
 
     public function seoFieldDefinition(Content $content, string $field): ?ContentType
     {
-        $fieldsConfig = $this->getExtensionConfig()->get('fields');
-        if (! isset($fieldsConfig[$field])) {
-            return null;
-        }
+        return ContentField::getFieldDefinition($content, $this->fieldNames($field));
+    }
 
-        return ContentField::getFieldDefinition($content, $fieldsConfig[$field]);
+    /**
+     * @return array<int, string>
+     */
+    private function fieldNames(string $field): array
+    {
+        return ConfigValue::fieldNames($this->getExtensionConfig()->get('fields'), $field);
     }
 
     private function getExtension(): ExtensionInterface

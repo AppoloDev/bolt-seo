@@ -12,7 +12,12 @@ title_length: 60
 description_length: 158
 keywords_length: 0 #255
 
-# Default values to consider for the title, meta description and meta keywords
+# Values in this file are text. A number, like `title: 2024`, is used as text.
+# `true`, `false` or a list where text is expected counts as not set, like "".
+
+# Default values to consider for the title, meta description and meta keywords.
+# Each entry lists field names, tried in order. A single name also works:
+# `title: headline`.
 fields:
     slug: ['slug']
     title: ['title', 'name']

@@ -162,6 +162,12 @@ file, including:
   - `override_default`, to set values per route or content type listing, with
     optional per-locale values.
 
+Values are text. A number, like `title: 2024`, is used as text, and so is `0`.
+`true`, `false` or a list where text is expected counts as not set, like an
+empty string, so the next source in the order above is used. Under `fields`,
+each entry is a list of field names tried in order; a single name, like
+`title: headline`, also works.
+
 The meta keywords field in the editor is disabled by default. To enable it, set
 `keywords_length` to a value above 0, for example `255`.
 

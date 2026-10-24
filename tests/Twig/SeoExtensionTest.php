@@ -255,6 +255,60 @@ class SeoExtensionTest extends TestCase
         self::assertNull($extension->seoFieldDefinition($content, 'title'));
     }
 
+    public function testSeoFieldAcceptsASingleConfiguredFieldName(): void
+    {
+        $extension = $this->makeExtension(['fields' => ['title' => 'headline']]);
+
+        self::assertSame(
+            'Fish and chips',
+            $extension->seoField($this->contentWithFields(['headline' => 'Fish and chips']), 'title')
+        );
+    }
+
+    public function testSeoFieldSkipsConfiguredFieldNamesThatAreNotText(): void
+    {
+        $extension = $this->makeExtension(['fields' => ['title' => [5, null, 'headline']]]);
+
+        self::assertSame(
+            'Fish and chips',
+            $extension->seoField($this->contentWithFields(['headline' => 'Fish and chips']), 'title')
+        );
+    }
+
+    public function testSeoFieldValuePostfixLeavesOutASeparatorThatIsNotText(): void
+    {
+        // Like a missing `title_separator`; the admin preview collapses the spaces.
+        $extension = $this->makeExtension(['title_postfix' => 'Acme', 'title_separator' => true]);
+
+        self::assertSame('  Acme', $extension->seoFieldValue($this->contentWithFields([]), 'postfix'));
+    }
+
+    public function testSeoFieldDefinitionReturnsNullWhenDefinitionFieldsAreNotACollection(): void
+    {
+        $contentDefinition = $this->createMock(ContentType::class);
+        $contentDefinition->method('get')->willReturn(null);
+        $content = $this->createMock(Content::class);
+        $content->method('getDefinition')->willReturn($contentDefinition);
+
+        $extension = $this->makeExtension(['fields' => ['title' => ['title']]]);
+
+        self::assertNull($extension->seoFieldDefinition($content, 'title'));
+    }
+
+    public function testSeoFieldDefinitionSkipsFieldsWithoutADefinition(): void
+    {
+        $definition = $this->createMock(ContentType::class);
+        $definitionFields = new Collection(['title' => null, 'name' => $definition]);
+        $contentDefinition = $this->createMock(ContentType::class);
+        $contentDefinition->method('get')->willReturn($definitionFields);
+        $content = $this->createMock(Content::class);
+        $content->method('getDefinition')->willReturn($contentDefinition);
+
+        $extension = $this->makeExtension(['fields' => ['title' => ['title', 'name']]]);
+
+        self::assertSame($definition, $extension->seoFieldDefinition($content, 'title'));
+    }
+
     // --- getFunctions ------------------------------------------------------
 
     public function testGetFunctionsRegistersExpectedTwigFunctions(): void
