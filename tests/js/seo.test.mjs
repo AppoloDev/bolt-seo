@@ -212,6 +212,46 @@ test('clearing the SEO description shows the base description when the descripti
     assert.equal(page.preview.description(), 'Base description');
 });
 
+test('shows a rich-text description field as plain text, not as HTML markup', async () => {
+    const page = await mount({ seo: { description: 'SEO description' }, descriptionValue: '<p>Intro with <strong>markup</strong></p>' });
+
+    page.type('#seofields-description', '');
+
+    assert.equal(page.preview.description(), 'Intro with markup');
+});
+
+test('decodes HTML entities from a rich-text description field', async () => {
+    const page = await mount({ seo: { description: 'SEO description' }, descriptionValue: '<p>Fish&nbsp;and chips &amp; peas</p>' });
+
+    page.type('#seofields-description', '');
+
+    assert.equal(page.preview.description(), 'Fish\u00a0and chips & peas');
+});
+
+test('shows the base description when the description field holds only empty editor markup', async () => {
+    const page = await mount({ seo: { description: 'SEO description' }, descriptionValue: '<p><br></p>' });
+
+    page.type('#seofields-description', '');
+
+    assert.equal(page.preview.description(), 'Base description');
+});
+
+test('shows the title field as plain text', async () => {
+    const page = await mount();
+
+    page.type('[name="fields[title]"]', 'Fish &amp; <b>Chips</b>');
+
+    assert.equal(page.preview.title(), 'Fish & Chips | Site');
+});
+
+test('does not store the stripped description field in the SEO data', async () => {
+    const page = await mount({ descriptionValue: '<p>Body</p>' });
+
+    page.type('#seofields-description', '');
+
+    assert.equal(page.storedSeo().description, '');
+});
+
 test('works when no content field is mapped to the description', async () => {
     const page = await mount({ descriptionField: '' });
 
@@ -238,12 +278,4 @@ test('follows a rich-text description field, which is written from script withou
     page.editorWrites('<p>Edited intro</p>');
 
     assert.equal(page.preview.description(), 'Edited intro');
-});
-
-test('shows a rich-text description field as plain text, not as HTML markup', { todo: ISSUE_14 }, async () => {
-    const page = await mount({ seo: { description: 'SEO description' }, descriptionValue: '<p>Intro with <strong>markup</strong></p>' });
-
-    page.type('#seofields-description', '');
-
-    assert.equal(page.preview.description(), 'Intro with markup');
 });
