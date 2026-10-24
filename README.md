@@ -87,9 +87,24 @@ can output them separately or use them in your own tags:
 <meta property="og:image" content="{{ seo.image() }}">
 ```
 
-Each value comes from the first of these that is set: the `override_default`
-entry for the current route, the record's SEO field, the record's own fields,
-and finally the `default` values in `appolo-boltseo.yaml`.
+Each value comes from the first of these that is set:
+
+  1. the `override_default` entry for the current route;
+  2. the record's SEO field, for every value except `image`, which the SEO field
+     doesn't store;
+  3. the record's own fields, as configured under `fields`, but only for
+     `title`, `description` and `image`;
+  4. the `default` values in `appolo-boltseo.yaml`.
+
+If none of them is set, the title falls back to Bolt's `sitename` and the
+description to Bolt's `payoff`. `canonical` falls back to the URL Bolt uses for
+`<link rel="canonical">`, `ogtype` to `website`, and `robots` to
+`index, follow`. `image` falls back to the record's image as Bolt finds it, or
+else stays empty.
+
+On a content type listing, the title falls back to the name of the content
+type instead of the `default` title. On a taxonomy page it is "Overview for …",
+unless `override_default` sets one.
 
 In PHP, for example in your own Twig function, you don't create the `Seo` class
 yourself. The same object is available as the `seo` Twig global:
@@ -129,7 +144,9 @@ templates:
 ```
 
 Next, copy the file `_metatags.html.twig` to your theme folder, and the
-extension will pick it up from there. The template receives the variables
+extension will pick it up from there. The path is relative to your theme
+folder, so to keep the file in a subfolder, include it in the path, for example
+`meta: partials/seo/_metatags.html.twig`. The template receives the variables
 `title`, `description`, `keywords`, `image`, `robots`, `ogtype` and `canonical`.
 
 ### Configuration
