@@ -17,7 +17,6 @@ use Twig\Environment;
 use Twig\Markup;
 
 /**
- * @package Appolo\BoltSeo\Seo
  * Priority:
  *  1. Override default
  *  2. Seo fields
@@ -98,7 +97,7 @@ class Seo
 
     private function loadRecordSeoFromTwig(): void
     {
-        if ($this->record || ! isset($this->twig->getGlobals()['record'])) {
+        if ($this->record instanceof Content || ! isset($this->twig->getGlobals()['record'])) {
             return;
         }
 
@@ -109,7 +108,7 @@ class Seo
         // JavaScript, but nothing guarantees that: fixtures, imports and API writes
         // can store anything. Anything that does not decode to an array degrades to
         // "no SEO data" so the normal fallback chain runs instead of fataling.
-        $decoded = $field && $field->__toString()
+        $decoded = $field instanceof Field && $field->__toString()
             ? json_decode($field->__toString(), true)
             : [];
 
@@ -136,7 +135,7 @@ class Seo
 
                 if ($this->record) {
                     $field = $this->getField($this->record, 'title');
-                    if ($field && $field->__toString() !== '') {
+                    if ($field instanceof Field && $field->__toString() !== '') {
                         return $this->cleanUp($field->__toString() . $this->postfixTitle());
                     }
                 }
@@ -163,7 +162,7 @@ class Seo
 
                 if ($this->record) {
                     $field = $this->getField($this->record, 'title');
-                    if ($field && $field->__toString() !== '') {
+                    if ($field instanceof Field && $field->__toString() !== '') {
                         return $this->cleanUp($field->__toString() . $this->postfixTitle());
                     }
                 }
@@ -193,7 +192,7 @@ class Seo
 
         if ($this->record) {
             $field = $this->getField($this->record, 'description');
-            if ($field && $field->__toString() !== '') {
+            if ($field instanceof Field && $field->__toString() !== '') {
                 $description = $this->cleanUp($field->__toString());
                 return $this->trimDescription($description);
             }
@@ -276,7 +275,7 @@ class Seo
 
         if ($this->record) {
             $field = $this->getField($this->record, 'image');
-            if ($field && $field->__toString() !== '') {
+            if ($field instanceof Field && $field->__toString() !== '') {
                 return $this->request->getSchemeAndHttpHost() . $this->cleanUp($field->__toString());
             }
         }

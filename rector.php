@@ -20,7 +20,4 @@
             doctrine: true,
             phpunit: true,
             symfony: true,
-        )
-        ->withSkip([
-            Rector\Symfony\CodeQuality\Rector\Class_\InlineClassRoutePrefixRector::class,
-        ]);
+        );
