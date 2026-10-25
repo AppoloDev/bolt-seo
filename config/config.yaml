@@ -37,13 +37,6 @@ default:
     robots: "index, follow"
     #image: "" Set absolute URL
 
-# Control who can view the more "scary" fields
-# allow:
-#    shortlink: [ chief-editor, admin, developer, root ]
-#    canonical: [ chief-editor, admin, developer, root ]
-#    robots: [ chief-editor, admin, developer, root ]
-#    ogtype: [ chief-editor, admin, developer, root ]
-
 # Use your own copy of the meta tags template. The path is relative to your theme folder,
 # so a subfolder works too, for example `partials/seo/_metatags.html.twig`.
 #templates:
