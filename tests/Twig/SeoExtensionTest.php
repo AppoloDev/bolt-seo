@@ -221,6 +221,27 @@ class SeoExtensionTest extends TestCase
         self::assertSame('', $extension->seoFieldValue($this->contentWithFields([]), 'postfix'));
     }
 
+    /**
+     * Like Seo::postfixTitle(): a postfix that is not text means no postfix
+     * (`true` used to print `1`), as does a sitename that is not text.
+     */
+    public function testSeoFieldValuePostfixThatIsNotTextMeansNoPostfix(): void
+    {
+        $extension = $this->makeExtension(['title_postfix' => true, 'title_separator' => '|']);
+
+        self::assertSame('', $extension->seoFieldValue($this->contentWithFields([]), 'postfix'));
+    }
+
+    public function testSeoFieldValuePostfixIgnoresASitenameThatIsNotText(): void
+    {
+        $boltConfig = $this->createMock(Config::class);
+        $boltConfig->method('get')->willReturn(['Acme']);
+
+        $extension = $this->makeExtension(['title_postfix' => '', 'title_separator' => '|'], boltConfig: $boltConfig);
+
+        self::assertSame('', $extension->seoFieldValue($this->contentWithFields([]), 'postfix'));
+    }
+
     public function testSeoFieldValueUnknownFieldReturnsEmptyString(): void
     {
         $extension = $this->makeExtension(['fields' => []]);
@@ -253,6 +274,60 @@ class SeoExtensionTest extends TestCase
         $content = $this->contentWithFieldDefinition('other', $this->createMock(ContentType::class));
 
         self::assertNull($extension->seoFieldDefinition($content, 'title'));
+    }
+
+    public function testSeoFieldAcceptsASingleConfiguredFieldName(): void
+    {
+        $extension = $this->makeExtension(['fields' => ['title' => 'headline']]);
+
+        self::assertSame(
+            'Fish and chips',
+            $extension->seoField($this->contentWithFields(['headline' => 'Fish and chips']), 'title')
+        );
+    }
+
+    public function testSeoFieldSkipsConfiguredFieldNamesThatAreNotText(): void
+    {
+        $extension = $this->makeExtension(['fields' => ['title' => [5, null, 'headline']]]);
+
+        self::assertSame(
+            'Fish and chips',
+            $extension->seoField($this->contentWithFields(['headline' => 'Fish and chips']), 'title')
+        );
+    }
+
+    public function testSeoFieldValuePostfixLeavesOutASeparatorThatIsNotText(): void
+    {
+        // Like a missing `title_separator`; the admin preview collapses the spaces.
+        $extension = $this->makeExtension(['title_postfix' => 'Acme', 'title_separator' => true]);
+
+        self::assertSame('  Acme', $extension->seoFieldValue($this->contentWithFields([]), 'postfix'));
+    }
+
+    public function testSeoFieldDefinitionReturnsNullWhenDefinitionFieldsAreNotACollection(): void
+    {
+        $contentDefinition = $this->createMock(ContentType::class);
+        $contentDefinition->method('get')->willReturn(null);
+        $content = $this->createMock(Content::class);
+        $content->method('getDefinition')->willReturn($contentDefinition);
+
+        $extension = $this->makeExtension(['fields' => ['title' => ['title']]]);
+
+        self::assertNull($extension->seoFieldDefinition($content, 'title'));
+    }
+
+    public function testSeoFieldDefinitionSkipsFieldsWithoutADefinition(): void
+    {
+        $definition = $this->createMock(ContentType::class);
+        $definitionFields = new Collection(['title' => null, 'name' => $definition]);
+        $contentDefinition = $this->createMock(ContentType::class);
+        $contentDefinition->method('get')->willReturn($definitionFields);
+        $content = $this->createMock(Content::class);
+        $content->method('getDefinition')->willReturn($contentDefinition);
+
+        $extension = $this->makeExtension(['fields' => ['title' => ['title', 'name']]]);
+
+        self::assertSame($definition, $extension->seoFieldDefinition($content, 'title'));
     }
 
     // --- getFunctions ------------------------------------------------------
