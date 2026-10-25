@@ -18,7 +18,7 @@ const script = readFileSync(new URL('../../assets/seo/seo.js', import.meta.url),
 
 const ISSUE_14 = 'https://github.com/AppoloDev/bolt-seo/issues/14';
 
-const EMPTY_SEO = { title: '', description: '', keywords: '', shortlink: '', canonical: '', robots: '', og: '' };
+const EMPTY_SEO = { title: '', description: '', keywords: '', canonical: '', robots: '', og: '' };
 
 async function mount({
     seo = {},
@@ -33,7 +33,6 @@ async function mount({
         <input id="seofields-title">
         <textarea id="seofields-description"></textarea>
         <textarea id="seofields-keywords"></textarea>
-        <input id="seofields-shortlink">
         <input id="seofields-canonical">
         <select id="seofields-robots"><option value=""></option><option value="noindex, follow">noindex, follow</option></select>
         <input id="seofields-og">
@@ -142,7 +141,7 @@ test('strips HTML from SEO input values before showing and persisting them', asy
     assert.equal(page.storedSeo().description, 'My SEO description');
 });
 
-for (const key of ['keywords', 'shortlink', 'canonical', 'og']) {
+for (const key of ['keywords', 'canonical', 'og']) {
     test(`typing in the SEO ${key} input persists it`, async () => {
         const page = await mount();
 
@@ -151,6 +150,14 @@ for (const key of ['keywords', 'shortlink', 'canonical', 'og']) {
         assert.equal(page.storedSeo()[key], `${key} value`);
     });
 }
+
+test('keeps a previously stored shortlink value, which has no input anymore', async () => {
+    const page = await mount({ seo: { shortlink: 'https://example.test/s/1' } });
+
+    page.type('#seofields-title', 'SEO title');
+
+    assert.equal(page.storedSeo().shortlink, 'https://example.test/s/1');
+});
 
 test('changing the robots select persists it', async () => {
     const page = await mount();
